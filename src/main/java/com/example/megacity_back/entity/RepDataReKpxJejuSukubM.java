@@ -14,30 +14,35 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class RepDataReKpxJejuSukubM {
+
     @Id
-    @Column(length = 12, nullable = false)
-    private String TM;
+    @Column(name = "TM", length = 12, nullable = false)
+    private String tm;
 
-    @Column(precision = 18, scale = 5)
-    private BigDecimal SUPP_ABILITY;
-    @Column(precision = 18, scale = 5)
-    private BigDecimal CURR_PWR_TOT;
-    @Column(precision = 18, scale = 5)
-    private BigDecimal RENEW_PWR_TOT;
-    @Column(precision = 18, scale = 5)
-    private BigDecimal RENEW_PWR_SOLAR;
-    @Column(precision = 18, scale = 5)
-    private BigDecimal RENEW_PWR_WIND;
+    @Column(name = "SUPP_ABILITY", precision = 18, scale = 5)
+    private BigDecimal suppAbility;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime REG_DATE;
+    @Column(name = "CURR_PWR_TOT", precision = 18, scale = 5)
+    private BigDecimal currPwrTot;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime UPD_DATE;
+    @Column(name = "RENEW_PWR_TOT", precision = 18, scale = 5)
+    private BigDecimal renewPwrTot;
+
+    @Column(name = "RENEW_PWR_SOLAR", precision = 18, scale = 5)
+    private BigDecimal renewPwrSolar;
+
+    @Column(name = "RENEW_PWR_WIND", precision = 18, scale = 5)
+    private BigDecimal renewPwrWind;
+
+    @Column(name = "REG_DATE", nullable = false, updatable = false)
+    private LocalDateTime regDate;
+
+    @Column(name = "UPD_DATE", nullable = false, updatable = false)
+    private LocalDateTime updDate;
 
     @PrePersist
     protected void onCreate() {
-        this.REG_DATE = LocalDateTime.now();
-        this.UPD_DATE = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
+        this.updDate = LocalDateTime.now();
     }
 }

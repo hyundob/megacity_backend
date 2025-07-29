@@ -16,52 +16,58 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class RepDataHgFcstNwpDa {
-    @Id
-    @Column(length = 2, nullable = false)
-    private String PWR_EXC_TP_CD;
 
     @Id
-    @Column(length = 20, nullable = false)
-    private String AREA_GRP_CD;
+    @Column(name = "PWR_EXC_TP_CD", length = 2, nullable = false)
+    private String pwrExcTpCd;
 
     @Id
-    @Column(length = 20, nullable = false)
-    private String AREA_GRP_ID;
+    @Column(name = "AREA_GRP_CD", length = 20, nullable = false)
+    private String areaGrpCd;
 
     @Id
-    @Column(length = 12, nullable = false)
-    private String CRTN_TM;
+    @Column(name = "AREA_GRP_ID", length = 20, nullable = false)
+    private String areaGrpId;
 
     @Id
-    @Column(length = 12, nullable = false)
-    private String FCST_TM;
+    @Column(name = "CRTN_TM", length = 12, nullable = false)
+    private String crtnTm;
 
-    @Column(length = 5)
-    private String LEAD_TM;
+    @Id
+    @Column(name = "FCST_TM", length = 12, nullable = false)
+    private String fcstTm;
 
-    @Column(length = 2)
-    private String FCST_PROD_CD;
+    @Column(name = "LEAD_TM", length = 5)
+    private String leadTm;
 
-    @Column(precision = 7, scale = 6)
-    private BigDecimal FCST_SRAD;
-    @Column(precision = 7, scale = 6)
-    private BigDecimal FCST_TEMP;
-    @Column(precision = 7, scale = 6)
-    private BigDecimal FCST_HUMI;
-    @Column(precision = 7, scale = 6)
-    private BigDecimal FCST_WSPD;
-    @Column(precision = 7, scale = 6)
-    private BigDecimal FCST_PSFC;
+    @Column(name = "FCST_PROD_CD", length = 2)
+    private String fcstProdCd;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime REG_DATE;
+    @Column(name = "FCST_SRAD", precision = 10, scale = 6)
+    private BigDecimal fcstSrad;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime UPD_DATE;
+    @Column(name = "FCST_TEMP", precision = 10, scale = 6)
+    private BigDecimal fcstTemp;
+
+    @Column(name = "FCST_HUMI", precision = 10, scale = 6)
+    private BigDecimal fcstHumi;
+
+    @Column(name = "FCST_WSPD", precision = 10, scale = 6)
+    private BigDecimal fcstWspd;
+
+    @Column(name = "FCST_PSFC", precision = 10, scale = 6)
+    private BigDecimal fcstPsfc;
+
+    @Column(name = "REG_DATE", nullable = false, updatable = false)
+    private LocalDateTime regDate;
+
+    @Column(name = "UPD_DATE", nullable = false, updatable = false)
+    private LocalDateTime updDate;
 
     @PrePersist
     protected void onCreate() {
-        this.REG_DATE = LocalDateTime.now();
-        this.UPD_DATE = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
+        this.updDate = LocalDateTime.now();
     }
 }
+
