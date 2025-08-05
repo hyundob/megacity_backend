@@ -6,5 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface RepDataReFcstGenDaRepository extends CrudRepository<RepDataReFcstGenDa, FcstGenGentDaId> {
-    List<RepDataReFcstGenDa> findByFcstTmStartingWith(String todayPrefix);
+    List<RepDataReFcstGenDa> findByFuelTpCdAndFcstTmStartingWith(String fuelTpCd, String fcstTmStartingWith);
 }

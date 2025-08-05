@@ -18,7 +18,7 @@ public class FcstGenDaService {
 
     public List<FcstGenDaChartDto> getTodayForecasts() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        List<RepDataReFcstGenDa> records = repository.findByFcstTmStartingWith(today);
+        List<RepDataReFcstGenDa> records = repository.findByFuelTpCdAndFcstTmStartingWith("SOLAR", today);
 
         return records.stream()
                 .map(e -> FcstGenDaChartDto.builder()
