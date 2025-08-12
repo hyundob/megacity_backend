@@ -5,30 +5,30 @@ import java.util.Objects;
 
 public class GemGentDaId implements Serializable {
 
-    private String TM;
-    private String AREA_GRP_CD;
-    private String AREA_GRP_ID;
+    private String tm;
+    private String areaGrpCd;
+    private String areaGrpId;
 
     public GemGentDaId() {}
 
-    public GemGentDaId(String TM, String AREA_GRP_CD, String AREA_GRP_ID) {
-        this.TM = TM;
-        this.AREA_GRP_CD = AREA_GRP_CD;
-        this.AREA_GRP_ID = AREA_GRP_ID;
+    public GemGentDaId(String tm, String areaGrpCd, String areaGrpId) {
+        this.tm = tm;
+        this.areaGrpCd = areaGrpCd;
+        this.areaGrpId = areaGrpId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if(!(o instanceof GemGentDaId)) return false;
+        if (!(o instanceof GemGentDaId)) return false;
         GemGentDaId that = (GemGentDaId) o;
-        return Objects.equals(TM, that.TM) &&
-                Objects.equals(AREA_GRP_CD, that.AREA_GRP_CD) &&
-                Objects.equals(AREA_GRP_ID, that.AREA_GRP_ID);
+        return Objects.equals(tm, that.tm) &&
+                Objects.equals(areaGrpCd, that.areaGrpCd) &&
+                Objects.equals(areaGrpId, that.areaGrpId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(TM, AREA_GRP_CD, AREA_GRP_ID);
+        return Objects.hash(tm, areaGrpCd, areaGrpId);
     }
 }

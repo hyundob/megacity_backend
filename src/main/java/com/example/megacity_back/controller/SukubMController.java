@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/operation")
 @RequiredArgsConstructor
@@ -16,6 +18,11 @@ public class SukubMController {
     @GetMapping("/latest")
     public SukubMDto getLatestSukubM() {
         return service.getLastestSukubM();
+    }
+
+    @GetMapping("/today")
+    public List<SukubMDto> getTodaySukubM() {
+        return service.getTodaySukubM();
     }
 
 }
