@@ -10,54 +10,64 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "REP_DATA_RE_FCST_LFD_DA")
 @IdClass(FcstLfdDaId.class)
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class RepDataReFcstLfdDa {
 
     @Id
-    @Column(length = 12, nullable = false)
-    private String CRTN_TM;
+    @Column(name = "CRTN_TM", length = 12, nullable = false)
+    private String crtnTm;
 
     @Id
-    @Column(length = 12, nullable = false)
-    private String FCST_TM;
+    @Column(name = "FCST_TM", length = 12, nullable = false)
+    private String fcstTm;
 
-    @Column(length = 15)
-    private String LEAD_TM;
+    @Column(name = "LEAD_TM", length = 15)
+    private String leadTm;
 
-    @Column(length = 2)
-    private String FCST_PROD_CD;
+    @Column(name = "FCST_PROD_CD", length = 2)
+    private String fcstProdCd;
 
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QG01;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QG02;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QG03;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QG04;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QG05;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QG06;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QGEN;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QGMX;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QGMN;
+    @Column(name = "FCST_QG01", precision = 13, scale = 6)
+    private BigDecimal fcstQg01;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime REG_DATE;
+    @Column(name = "FCST_QG02", precision = 13, scale = 6)
+    private BigDecimal fcstQg02;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime UPD_DATE;
+    @Column(name = "FCST_QG03", precision = 13, scale = 6)
+    private BigDecimal fcstQg03;
+
+    @Column(name = "FCST_QG04", precision = 13, scale = 6)
+    private BigDecimal fcstQg04;
+
+    @Column(name = "FCST_QG05", precision = 13, scale = 6)
+    private BigDecimal fcstQg05;
+
+    @Column(name = "FCST_QG06", precision = 13, scale = 6)
+    private BigDecimal fcstQg06;
+
+    @Column(name = "FCST_QGEN", precision = 13, scale = 6)
+    private BigDecimal fcstQgen;
+
+    @Column(name = "FCST_QGMX", precision = 13, scale = 6)
+    private BigDecimal fcstQgmx;
+
+    @Column(name = "FCST_QGMN", precision = 13, scale = 6)
+    private BigDecimal fcstQgmn;
+
+    @Column(name = "REG_DATE", nullable = false, updatable = false)
+    private LocalDateTime regDate;
+
+    @Column(name = "UPD_DATE", nullable = false, updatable = false)
+    private LocalDateTime updDate;
 
     @PrePersist
     protected void onCreate() {
-        this.REG_DATE = LocalDateTime.now();
-        this.UPD_DATE = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
+        this.updDate = LocalDateTime.now();
     }
 }
+

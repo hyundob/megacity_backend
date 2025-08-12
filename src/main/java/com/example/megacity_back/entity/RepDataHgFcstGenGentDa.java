@@ -11,48 +11,50 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "REP_DATA_HG_FCST_GEN_GENT_DA")
 @IdClass(FcstGenGentDaId.class)
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class RepDataHgFcstGenGentDa {
-    @Id
-    @Column(length = 20, nullable = false)
-    private String AREA_GRP_CD;
 
     @Id
-    @Column(length = 20, nullable = false)
-    private String AREA_GRP_ID;
+    @Column(name = "AREA_GRP_CD", length = 20, nullable = false)
+    private String areaGrpCd;
 
     @Id
-    @Column(length = 12, nullable = false)
-    private String CRTN_TM;
+    @Column(name = "AREA_GRP_ID", length = 20, nullable = false)
+    private String areaGrpId;
 
     @Id
-    @Column(length = 12, nullable = false)
-    private String FCST_TM;
+    @Column(name = "CRTN_TM", length = 12, nullable = false)
+    private String crtnTm;
 
-    @Column(length = 5, nullable = false)
-    private String LEAD_TM;
+    @Id
+    @Column(name = "FCST_TM", length = 12, nullable = false)
+    private String fcstTm;
 
-    @Column(length = 2, nullable = false)
-    private String FCST_PROD_CD;
+    @Column(name = "LEAD_TM", length = 5, nullable = false)
+    private String leadTm;
 
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_QGEN;
-    @Column(precision = 13, scale = 6)
-    private BigDecimal FCST_CAPA;
+    @Column(name = "FCST_PROD_CD", length = 2, nullable = false)
+    private String fcstProdCd;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime REG_DATE;
+    @Column(name = "FCST_QGEN", precision = 13, scale = 6)
+    private BigDecimal fcstQgen;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime UPD_DATE;
+    @Column(name = "FCST_CAPA", precision = 13, scale = 6)
+    private BigDecimal fcstCapa;
+
+    @Column(name = "REG_DATE", nullable = false, updatable = false)
+    private LocalDateTime regDate;
+
+    @Column(name = "UPD_DATE", nullable = false, updatable = false)
+    private LocalDateTime updDate;
 
     @PrePersist
     protected void onCreate() {
-        this.REG_DATE = LocalDateTime.now();
-        this.UPD_DATE = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
+        this.updDate = LocalDateTime.now();
     }
 }

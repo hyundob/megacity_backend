@@ -12,7 +12,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "http://localhost:3000")
+                        .allowedOrigins("http://localhost:5173", "http://localhost:3000", "http://210.222.202.14:13000", "http://210.222.202.14:3000", "http://tef.ai:13000", "http://tef.ai:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true);
 

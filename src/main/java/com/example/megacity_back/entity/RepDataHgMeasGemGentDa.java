@@ -16,32 +16,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class RepDataHgMeasGemGentDa {
-    @Id
-    @Column(length = 12, nullable = false)
-    private String TM;
 
     @Id
-    @Column(length = 20, nullable = false)
-    private String AREA_GRP_CD;
+    @Column(name = "TM", length = 12, nullable = false)
+    private String tm;
 
     @Id
-    @Column(length = 20, nullable = false)
-    private String AREA_GRP_ID;
+    @Column(name = "AREA_GRP_CD", length = 20, nullable = false)
+    private String areaGrpCd;
 
-    @Column(precision = 18, scale = 5)
-    private BigDecimal HGEN_PROD;
-    @Column(precision = 18, scale = 5)
-    private BigDecimal HGEN_CAPA;
+    @Id
+    @Column(name = "AREA_GRP_ID", length = 20, nullable = false)
+    private String areaGrpId;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime REG_DATE;
+    @Column(name = "HGEN_PROD", precision = 18, scale = 5)
+    private BigDecimal hgenProd;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime UPD_DATE;
+    @Column(name = "HGEN_CAPA", precision = 18, scale = 5)
+    private BigDecimal hgenCapa;
+
+    @Column(name = "REG_DATE", nullable = false, updatable = false)
+    private LocalDateTime regDate;
+
+    @Column(name = "UPD_DATE", nullable = false, updatable = false)
+    private LocalDateTime updDate;
 
     @PrePersist
     protected void onCreate() {
-        this.REG_DATE = LocalDateTime.now();
-        this.UPD_DATE = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
+        this.updDate = LocalDateTime.now();
     }
 }

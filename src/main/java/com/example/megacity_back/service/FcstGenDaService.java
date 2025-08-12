@@ -26,6 +26,7 @@ public class FcstGenDaService {
                         .fcstQgen(e.getFcstQgen() != null ? e.getFcstQgen().doubleValue() : 0.0)
                         .fcstQgmx(e.getFcstQgmx() != null ? e.getFcstQgmx().doubleValue() : 0.0)
                         .fcstQgmn(e.getFcstQgmn() != null ? e.getFcstQgmn().doubleValue() : 0.0)
+                        .fcstCapa(e.getFcstCapa() != null ? e.getFcstCapa().doubleValue() : 0.0)
                         .build())
                 .collect(Collectors.toList());
     }

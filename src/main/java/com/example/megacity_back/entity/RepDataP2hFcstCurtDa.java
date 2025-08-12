@@ -10,36 +10,39 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "REP_DATA_P2H_FCST_CURT_DA")
 @IdClass(FcstCurtDaId.class)
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class RepDataP2hFcstCurtDa {
-    @Id
-    @Column(length = 12, nullable = false)
-    private String CRTN_TM;
 
     @Id
-    @Column(length = 12, nullable = false)
-    private String FCST_TM;
+    @Column(name = "CRTN_TM", length = 12, nullable = false)
+    private String crtnTm;
 
-    @Column(length = 5)
-    private String LEAD_TM;
+    @Id
+    @Column(name = "FCST_TM", length = 12, nullable = false)
+    private String fcstTm;
 
-    @Column(precision = 7, scale = 2)
-    private BigDecimal FCST_MINPW;
-    @Column(precision = 7, scale = 2)
-    private BigDecimal FCST_CURT;
+    @Column(name = "LEAD_TM", length = 5)
+    private String leadTm;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime REG_DATE;
+    @Column(name = "FCST_MINPW", precision = 7, scale = 2)
+    private BigDecimal fcstMinpw;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime UPD_DATE;
+    @Column(name = "FCST_CURT", precision = 7, scale = 2)
+    private BigDecimal fcstCurt;
+
+    @Column(name = "REG_DATE", nullable = false, updatable = false)
+    private LocalDateTime regDate;
+
+    @Column(name = "UPD_DATE", nullable = false, updatable = false)
+    private LocalDateTime updDate;
 
     @PrePersist
     protected void onCreate() {
-        this.REG_DATE = LocalDateTime.now();
-        this.UPD_DATE = LocalDateTime.now();
+        this.regDate = LocalDateTime.now();
+        this.updDate = LocalDateTime.now();
     }
 }
