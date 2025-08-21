@@ -13,4 +13,8 @@ public class FcstGenDaChartDto {
     private double fcstQgmx;       // 예측최대
     private double fcstQgmn;       // 예측최소
     private double fcstCapa;  // 예측설비용량(MW)
+    private double essChrg;
+    private double essDisc;
+    private double essCapa;
+
 }
