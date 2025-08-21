@@ -27,6 +27,9 @@ public class FcstGenDaService {
                         .fcstQgmx(e.getFcstQgmx() != null ? e.getFcstQgmx().doubleValue() : 0.0)
                         .fcstQgmn(e.getFcstQgmn() != null ? e.getFcstQgmn().doubleValue() : 0.0)
                         .fcstCapa(e.getFcstCapa() != null ? e.getFcstCapa().doubleValue() : 0.0)
+                        .essChrg(e.getEssChrg() != null ? e.getEssChrg().doubleValue() : 0.0)
+                        .essDisc(e.getEssDisc() != null ? e.getEssDisc().doubleValue() : 0.0)
+                        .essCapa(e.getEssCapa() != null ? e.getEssCapa().doubleValue() : 0.0)
                         .build())
                 .collect(Collectors.toList());
     }
