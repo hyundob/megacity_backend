@@ -1,6 +1,5 @@
 package com.example.megacity_back.service;
 
-import com.example.megacity_back.dto.FcstCurtDaDto;
 import com.example.megacity_back.dto.GenGentDaDto;
 import com.example.megacity_back.repository.RepDataHgFcstGenGentDaRepository;
 import lombok.RequiredArgsConstructor;
