@@ -12,14 +12,14 @@ import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
-public class FcstNwpService {
+public class ForecastPredictService {
     private final RepDataHgFcstNwpDaRepository repository;
 
-    public List<RepDataHgFcstNwpDa> getAllFcstNwp() {
+    public List<RepDataHgFcstNwpDa> getAllWeatherForecasts() {
         return (List<RepDataHgFcstNwpDa>) repository.findAll();
     }
 
-    public ForeCastDto getLatestForecast() {
+    public ForeCastDto getLatestWeatherForecast() {
     RepDataHgFcstNwpDa latest = repository.findTopByOrderByFcstTmDesc()
             .orElseThrow(() -> new RuntimeException("예보 데이터 없음"));
 
@@ -34,7 +34,7 @@ public class FcstNwpService {
         );
     }
 
-    public List<ForeCastDto> getSimplifiedForecast() {
+    public List<ForeCastDto> getWeatherForecastSummary() {
         return StreamSupport.stream(repository.findAll().spliterator(), false)
                 .map(e -> new ForeCastDto(
                         e.getCrtnTm(),

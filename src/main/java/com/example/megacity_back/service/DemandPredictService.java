@@ -1,7 +1,6 @@
 package com.example.megacity_back.service;
 
 import com.example.megacity_back.dto.FcstLfdDaDto;
-import com.example.megacity_back.entity.RepDataReFcstLfdDa;
 import com.example.megacity_back.repository.RepDataReFcstLfdDaRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
@@ -12,10 +11,10 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
-public class FcstLfdDaService {
+public class DemandPredictService {
     private final RepDataReFcstLfdDaRepository repository;
 
-    public List<FcstLfdDaDto> getFcstLfdDa() {
+    public List<FcstLfdDaDto> getTodayLoadForecast() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         return repository.findByFcstTmStartingWith(today).stream()

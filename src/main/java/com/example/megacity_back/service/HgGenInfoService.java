@@ -11,10 +11,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GemGentDaService {
+public class HgGenInfoService {
     private final RepDataHgMeasGemGentDaRepository repository;
 
-    public List<GemGentDaDto> getTodayGem() {
+    public List<GemGentDaDto> getTodayGeneration() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         return repository.findByAreaGrpCdAndTmStartingWith("SEOUL", today).stream()

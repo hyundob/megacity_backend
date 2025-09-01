@@ -11,10 +11,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GenGentDaService {
+public class HgGenPredictService {
     private final RepDataHgFcstGenGentDaRepository repository;
 
-    public List<GenGentDaDto> getTodayGen() {
+    public List<GenGentDaDto> getTodayForecastGeneration() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         return repository.findByAreaGrpCdAndFcstTmStartingWith("SEOUL", today).stream()

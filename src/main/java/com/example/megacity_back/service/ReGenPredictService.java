@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class FcstGenDaService {
+public class ReGenPredictService {
     private final RepDataReFcstGenDaRepository repository;
 
-    public List<FcstGenDaChartDto> getTodayForecasts() {
+    public List<FcstGenDaChartDto> getTodayForecastGenerationChart() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         List<RepDataReFcstGenDa> records = repository.findByFuelTpCdAndFcstTmStartingWith("SOLAR", today);
 
