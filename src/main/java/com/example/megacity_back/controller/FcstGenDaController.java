@@ -1,21 +1,26 @@
 package com.example.megacity_back.controller;
 
 import com.example.megacity_back.dto.FcstGenDaChartDto;
-import com.example.megacity_back.service.FcstGenDaService;
+import com.example.megacity_back.service.ReGenPredictService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/fcst-gen")
+@RequestMapping("/api/re-gen-predict")
 @RequiredArgsConstructor
 public class FcstGenDaController {
 
-    private final FcstGenDaService service;
+    private final ReGenPredictService service;
 
-    @GetMapping("/chart")
-    public List<FcstGenDaChartDto> getTodayFcstGenChart() {
-        return service.getTodayForecasts();
+    @GetMapping("/today")
+    public List<FcstGenDaChartDto> getTodayForecastGenerationChart() {
+        return service.getTodayForecastGenerationChart();
+    }
+
+    @GetMapping("/ess")
+    public List<FcstGenDaChartDto> getTodayEssOperation() {
+        return service.getTodayForecastGenerationChart();
     }
 }

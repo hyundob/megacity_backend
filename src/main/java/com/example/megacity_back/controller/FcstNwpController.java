@@ -2,29 +2,29 @@ package com.example.megacity_back.controller;
 
 import com.example.megacity_back.dto.ForeCastDto;
 import com.example.megacity_back.entity.RepDataHgFcstNwpDa;
-import com.example.megacity_back.service.FcstNwpService;
+import com.example.megacity_back.service.ForecastPredictService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/forecast")
+@RequestMapping("/api/forecast-predict")
 @RequiredArgsConstructor
 public class FcstNwpController {
-    private final FcstNwpService service;
+    private final ForecastPredictService service;
 
     @GetMapping("/latest")
-    public ForeCastDto getLatestForecast() {
-        return service.getLatestForecast();
+    public ForeCastDto getLatestWeatherForecast() {
+        return service.getLatestWeatherForecast();
     }
     @GetMapping("/all")
-    public List<RepDataHgFcstNwpDa> getallForeCast() {
-        return service.getAllFcstNwp();
+    public List<RepDataHgFcstNwpDa> getAllWeatherForecasts() {
+        return service.getAllWeatherForecasts();
     }
 
     @GetMapping("/summary")
-    public List<ForeCastDto> getSimpleForecast() {
-        return service.getSimplifiedForecast();
+    public List<ForeCastDto> getWeatherForecastSummary() {
+        return service.getWeatherForecastSummary();
     }
 }

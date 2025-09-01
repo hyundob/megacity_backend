@@ -11,9 +11,9 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class FcstCurtDaService {
+public class JejuCurtPredictService {
     private final RepDataP2hFcstCurtDaRepository repository;
-    public List<FcstCurtDaDto> getTodayDate() {
+    public List<FcstCurtDaDto> getTodayCurtailment() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         return repository.findByFcstTmStartingWith(today).stream()

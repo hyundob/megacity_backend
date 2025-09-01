@@ -2,22 +2,22 @@ package com.example.megacity_back.controller;
 
 
 import com.example.megacity_back.dto.FcstCurtDaDto;
-import com.example.megacity_back.service.FcstCurtDaService;
+import com.example.megacity_back.service.JejuCurtPredictService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/curt")
+@RequestMapping("/api/jeju-curt-predict")
 @RequiredArgsConstructor
 public class FcstCurtDaController {
 
-    private final FcstCurtDaService fcstCurtDaService;
+    private final JejuCurtPredictService fcstCurtDaService;
 
     @GetMapping("/today")
-    public List<FcstCurtDaDto> getTodayCurt() {
-        return fcstCurtDaService.getTodayDate();
+    public List<FcstCurtDaDto> getTodayCurtailment() {
+        return fcstCurtDaService.getTodayCurtailment();
     }
 
 }

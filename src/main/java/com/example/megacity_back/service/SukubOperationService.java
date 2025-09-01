@@ -12,13 +12,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SukubMService {
+public class SukubOperationService {
     private final RepDataReKpxJejuSukubMRepository repository;
     public List<RepDataReKpxJejuSukubM> getAllSukubM() {
         return (List<RepDataReKpxJejuSukubM>) repository.findAll();
     }
 
-    public SukubMDto getLastestSukubM() {
+    public SukubMDto getLatestOperation() {
         RepDataReKpxJejuSukubM latest = repository.findTopByOrderByTmDesc()
                 .orElseThrow(() -> new RuntimeException("데이터 없음"));
 
@@ -32,7 +32,7 @@ public class SukubMService {
         );
     }
 
-    public List<SukubMDto> getTodaySukubM() {
+    public List<SukubMDto> getTodayOperation() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         return repository.findByTmStartingWith(today).stream()
                 .map(e -> new SukubMDto(
