@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// REP_DATA_RE_FCST_GEN_DA 데이터
 @RestController
 @RequestMapping("/api/re-gen-predict")
 @RequiredArgsConstructor
-public class FcstGenDaController {
+public class ReGenPredict {
 
     private final ReGenPredictService service;
 

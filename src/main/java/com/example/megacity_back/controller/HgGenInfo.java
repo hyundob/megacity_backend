@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+// REP_DATA_HG_MEAS_GEM_GENT_DA 데이터
 @RestController
 @RequestMapping("/api/hg-gen-info")
 @RequiredArgsConstructor
-public class GemGentDaController {
+public class HgGenInfo {
 
     private final HgGenInfoService gemGentDaService;
 

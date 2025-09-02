@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// REP_DATA_HG_FCST_GEN_GENT_DA 데이터
 @RestController
 @RequestMapping("/api/hg-gen-predict")
 @RequiredArgsConstructor
-public class FcstGenGentDaController {
+public class HgGenPredict {
 
     private final HgGenPredictService fcstGenGentDaService;
 

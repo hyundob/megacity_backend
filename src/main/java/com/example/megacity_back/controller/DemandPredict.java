@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// REP_DATA_RE_FCST_LFD_DA 데이터
 @RestController
 @RequestMapping("/api/demand-predict")
 @RequiredArgsConstructor
-public class FcstLfdDaController {
+public class DemandPredict {
 
     private final DemandPredictService fcstLfdDaService;
 

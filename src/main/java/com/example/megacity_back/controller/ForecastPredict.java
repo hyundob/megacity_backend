@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// REP_DATA_HG_FCST_NWP_DA 데이터
 @RestController
 @RequestMapping("/api/forecast-predict")
 @RequiredArgsConstructor
-public class FcstNwpController {
+public class ForecastPredict {
     private final ForecastPredictService service;
 
     @GetMapping("/latest")
