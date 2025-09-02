@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// REP_DATA_RE_KPX_JEJU_SUKUN_M 데이터
 @RestController
 @RequestMapping("/api/sukub-operation")
 @RequiredArgsConstructor
-public class SukubMController {
+public class JejuSukubOperation {
     private final SukubOperationService service;
 
     @GetMapping("/latest")

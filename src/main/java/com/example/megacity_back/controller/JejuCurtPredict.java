@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// REP_DATA_P2H_FCST_CURT_DA 데이터
 @RestController
 @RequestMapping("/api/jeju-curt-predict")
 @RequiredArgsConstructor
-public class FcstCurtDaController {
+public class JejuCurtPredict {
 
     private final JejuCurtPredictService fcstCurtDaService;
 
