@@ -28,4 +28,9 @@ public class ForecastPredict {
     public List<ForeCastDto> getWeatherForecastSummary() {
         return service.getWeatherForecastSummary();
     }
+
+    @GetMapping("/last-48h")
+    public List<ForeCastDto> getLast48hForecast() {
+        return service.getLast48hForecast();
+    }
 }
