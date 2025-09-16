@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface RepDataReFcstGenDaRepository extends CrudRepository<RepDataReFcstGenDa, FcstGenGentDaId> {
+public interface RepDataReFcstGenDaRepository extends CrudRepository<RepDataReFcstGenDa, FcstGenDaId> {
     List<RepDataReFcstGenDa> findByFuelTpCdAndFcstTmStartingWith(String fuelTpCd, String fcstTmStartingWith);
 }
