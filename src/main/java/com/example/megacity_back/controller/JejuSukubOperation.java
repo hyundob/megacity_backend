@@ -25,5 +25,4 @@ public class JejuSukubOperation {
     public List<SukubMDto> getTodayOperation() {
         return service.getTodayOperation();
     }
- //ggggg
 }
