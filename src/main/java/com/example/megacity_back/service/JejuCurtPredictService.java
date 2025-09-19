@@ -24,5 +24,4 @@ public class JejuCurtPredictService {
                         .build())
                 .toList();
     }
-    // ggg
 }
