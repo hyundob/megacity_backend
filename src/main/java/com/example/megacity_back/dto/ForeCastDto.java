@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 public class ForeCastDto {
     private String crtnTm;
     private String fcstTm;
+    private String areaGrpId;
     private BigDecimal fcstSrad;
     private BigDecimal fcstTemp;
     private BigDecimal fcstHumi;

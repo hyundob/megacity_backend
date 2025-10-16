@@ -55,6 +55,15 @@ public class RepDataHgFcstNwpDa {
     @Column(name = "FCST_WSPD", precision = 10, scale = 6)
     private BigDecimal fcstWspd;
 
+    @Column(name = "FCST_WDIR", precision = 10, scale = 6)
+    private BigDecimal fcstWdir;
+
+    @Column(name = "FCST_WSL2", precision = 10, scale = 6)
+    private BigDecimal fcstWsl2;
+
+    @Column(name = "FCST_WDL2", precision = 10, scale = 6)
+    private BigDecimal fcstWdl2;
+
     @Column(name = "FCST_PSFC", precision = 10, scale = 6)
     private BigDecimal fcstPsfc;
 

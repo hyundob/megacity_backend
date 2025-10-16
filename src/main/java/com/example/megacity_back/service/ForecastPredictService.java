@@ -28,6 +28,7 @@ public class ForecastPredictService {
         return new ForeCastDto(
                 latest.getCrtnTm(),
                 latest.getFcstTm(),
+                latest.getAreaGrpId(),
                 latest.getFcstSrad(),
                 latest.getFcstTemp(),
                 latest.getFcstHumi(),
@@ -41,6 +42,7 @@ public class ForecastPredictService {
                 .map(e -> new ForeCastDto(
                         e.getCrtnTm(),
                         e.getFcstTm(),
+                        e.getAreaGrpId(),
                         e.getFcstSrad(),
                         e.getFcstTemp(),
                         e.getFcstHumi(),
@@ -65,6 +67,7 @@ public class ForecastPredictService {
                 .map(e -> new ForeCastDto(
                         e.getCrtnTm(),
                         e.getFcstTm(),
+                        e.getAreaGrpId(),
                         e.getFcstSrad(),
                         e.getFcstTemp(),
                         e.getFcstHumi(),
