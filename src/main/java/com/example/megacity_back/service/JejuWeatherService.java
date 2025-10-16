@@ -15,8 +15,8 @@ import java.util.*;
 @Service
 public class JejuWeatherService {
 
-    // OpenWeatherMap Current Weather Data API (무료)
-    private static final String OPENWEATHER_CURRENT_URL = "https://api.openweathermap.org/data/2.5/weather";
+    // OpenWeatherMap One Call API 3.0
+    private static final String OPENWEATHER_URL = "https://api.openweathermap.org/data/3.0/onecall";
     private static final String OPENWEATHER_API_KEY = "f517b1cad012dff300c568f5f7b74322";
     
     // 제주시 좌표
@@ -29,14 +29,14 @@ public class JejuWeatherService {
     @Value("${kma.key:}")
     private String kmaKey;
 
-    /** OpenWeatherMap Current Weather API를 사용한 날씨 정보 */
+    /** OpenWeatherMap One Call API 3.0을 사용한 날씨 정보 */
     public Map<String, Object> fetchMergedNow() {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", false);
         out.put("reason", "init");
 
         try {
-            String url = UriComponentsBuilder.fromHttpUrl(OPENWEATHER_CURRENT_URL)
+            String url = UriComponentsBuilder.fromHttpUrl(OPENWEATHER_URL)
                     .queryParam("lat", JEJU_LAT)
                     .queryParam("lon", JEJU_LON)
                     .queryParam("appid", OPENWEATHER_API_KEY)
@@ -52,18 +52,20 @@ public class JejuWeatherService {
             }
 
             JsonNode root = om.readTree(body);
+            JsonNode current = root.path("current");
             
-            // main 데이터
-            JsonNode main = root.path("main");
-            Double temp = main.path("temp").asDouble();
+            if (current.isMissingNode()) {
+                out.put("reason", "no_current_data");
+                return out;
+            }
+
+            // 현재 날씨 데이터 추출
+            Double temp = current.path("temp").asDouble();
+            Double windSpeed = current.path("wind_speed").asDouble();
+            Double windDeg = current.path("wind_deg").asDouble();
+            Integer cloudsAll = current.path("clouds").asInt();
             
-            // wind 데이터
-            JsonNode wind = root.path("wind");
-            Double windSpeed = wind.path("speed").asDouble();
-            Double windDeg = wind.path("deg").asDouble();
-            
-            // weather 데이터
-            JsonNode weatherArray = root.path("weather");
+            JsonNode weatherArray = current.path("weather");
             String weatherMain = "";
             Integer weatherId = null;
             
@@ -72,10 +74,6 @@ public class JejuWeatherService {
                 weatherMain = weather.path("main").asText("");
                 weatherId = weather.path("id").asInt();
             }
-            
-            // clouds 데이터
-            JsonNode clouds = root.path("clouds");
-            Integer cloudsAll = clouds.path("all").asInt();
 
             // 실황 데이터 (ncst_)
             out.put("ncst_success", true);
