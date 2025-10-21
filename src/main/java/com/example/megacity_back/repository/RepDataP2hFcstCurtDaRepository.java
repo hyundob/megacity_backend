@@ -4,7 +4,10 @@ import com.example.megacity_back.entity.*;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RepDataP2hFcstCurtDaRepository extends CrudRepository<RepDataP2hFcstCurtDa, FcstCurtDaId> {
     List<RepDataP2hFcstCurtDa> findByFcstTmStartingWith(String fcstTmPrefix);
+    Optional<RepDataP2hFcstCurtDa> findTopByOrderByCrtnTmDesc();
+    List<RepDataP2hFcstCurtDa> findByCrtnTmOrderByFcstTmAsc(String crtnTm);
 }

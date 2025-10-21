@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface RepDataReKpxJejuSukubMRepository extends JpaRepository<RepDataReKpxJejuSukubM, String> {
     Optional<RepDataReKpxJejuSukubM> findTopByOrderByTmDesc();
     List<RepDataReKpxJejuSukubM> findByTmStartingWith(String tm);
+    List<RepDataReKpxJejuSukubM> findByTmBetweenOrderByTmAsc(String startTm, String endTm);
 }

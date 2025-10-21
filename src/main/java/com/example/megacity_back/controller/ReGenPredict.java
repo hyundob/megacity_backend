@@ -15,9 +15,19 @@ public class ReGenPredict {
 
     private final ReGenPredictService service;
 
-    @GetMapping("/today")
-    public List<FcstGenDaChartDto> getTodayForecastGenerationChart() {
-        return service.getTodayForecastGenerationChart();
+    // @GetMapping("/today")
+    // public List<FcstGenDaChartDto> getTodayForecastGenerationChart() {
+    //     return service.getTodayForecastGenerationChart();
+    // }
+
+    @GetMapping("/latest-crtn")
+    public List<FcstGenDaChartDto> getLatestCrtnSolarForecast() {
+        return service.getLast49SolarForecast();
+    }
+
+    @GetMapping("/wind/latest-crtn")
+    public List<FcstGenDaChartDto> getLatestCrtnWindForecast() {
+        return service.getLatestWindForecast();
     }
 
     @GetMapping("/ess")

@@ -15,8 +15,13 @@ public class DemandPredict {
 
     private final DemandPredictService fcstLfdDaService;
 
-    @GetMapping("/today")
-    public List<FcstLfdDaDto> getTodayLoadForecast() {
-        return fcstLfdDaService.getTodayLoadForecast();
+    // @GetMapping("/today")
+    // public List<FcstLfdDaDto> getTodayLoadForecast() {
+    //     return fcstLfdDaService.getTodayLoadForecast();
+    // }
+
+    @GetMapping("/latest-crtn")
+    public List<FcstLfdDaDto> getLatestCrtnTmForecast() {
+        return fcstLfdDaService.getLatestCrtnTmForecast();
     }
 }

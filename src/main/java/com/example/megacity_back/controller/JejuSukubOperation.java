@@ -21,8 +21,13 @@ public class JejuSukubOperation {
         return service.getLatestOperation();
     }
 
-    @GetMapping("/today")
-    public List<SukubMDto> getTodayOperation() {
-        return service.getTodayOperation();
+    // @GetMapping("/today")
+    // public List<SukubMDto> getTodayOperation() {
+    //     return service.getTodayOperation();
+    // }
+
+    @GetMapping("/last-24h")
+    public List<SukubMDto> getLast24hOperation() {
+        return service.getLast24hOperation();
     }
 }

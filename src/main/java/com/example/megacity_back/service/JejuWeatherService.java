@@ -131,7 +131,7 @@ public class JejuWeatherService {
         
         // KMA: 1=맑음, 3=구름많음, 4=흐림
         if (clouds <= 20) return 1; // 맑음
-        if (clouds <= 60) return 3; // 구름많음
+        if (clouds <= 60) return 3; // 구름많음 
         return 4; // 흐림
     }
 

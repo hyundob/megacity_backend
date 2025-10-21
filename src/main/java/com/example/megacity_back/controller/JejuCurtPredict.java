@@ -16,9 +16,14 @@ public class JejuCurtPredict {
 
     private final JejuCurtPredictService fcstCurtDaService;
 
-    @GetMapping("/today")
-    public List<FcstCurtDaDto> getTodayCurtailment() {
-        return fcstCurtDaService.getTodayCurtailment();
+    // @GetMapping("/today")
+    // public List<FcstCurtDaDto> getTodayCurtailment() {
+    //     return fcstCurtDaService.getTodayCurtailment();
+    // }
+
+    @GetMapping("/latest-crtn")
+    public List<FcstCurtDaDto> getLatestCrtnCurtailment() {
+        return fcstCurtDaService.getLatestCrtnCurtailment();
     }
 
 }
