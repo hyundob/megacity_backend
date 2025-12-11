@@ -20,12 +20,12 @@
 ### 1. 수요 예측 (Demand Predict)
 제주 전력 수요 예측 데이터를 제공합니다.
 
-#### 1.1 금일 수요 예측 조회
+#### 1.1 최신 생성시간 기준 수요 예측 조회
 ```
-GET /api/demand-predict/today
+GET /api/demand-predict/latest-crtn
 ```
 
-**설명**: 오늘의 전력 수요 예측 데이터를 조회합니다.
+**설명**: 가장 최근 생성시간(crtnTm) 기준의 전력 수요 예측 데이터를 조회합니다.
 
 **응답 예시**:
 ```json
@@ -87,25 +87,7 @@ GET /api/forecast-predict/latest
 | fcstWspd | BigDecimal | 풍속 (m/s) |
 | fcstPsfc | BigDecimal | 기압 (hPa) |
 
-#### 2.2 전체 기상 예측 조회
-```
-GET /api/forecast-predict/all
-```
-
-**설명**: 모든 기상 예측 데이터를 조회합니다.
-
-**응답**: `RepDataHgFcstNwpDa` 엔티티 리스트
-
-#### 2.3 기상 예측 요약
-```
-GET /api/forecast-predict/summary
-```
-
-**설명**: 기상 예측 데이터의 요약 정보를 조회합니다.
-
-**응답**: `ForeCastDto` 리스트
-
-#### 2.4 최근 48시간 예측
+#### 2.2 최근 48시간 예측
 ```
 GET /api/forecast-predict/last-48h
 ```
@@ -189,12 +171,12 @@ GET /api/hg-gen-predict/today
 ### 5. 제주 출력 제어 예측 (Jeju Curtailment Predict)
 제주 전력 출력 제어 예측 정보를 제공합니다.
 
-#### 5.1 금일 출력 제어 예측 조회
+#### 5.1 최신 생성시간 기준 출력 제어 예측 조회
 ```
-GET /api/jeju-curt-predict/today
+GET /api/jeju-curt-predict/latest-crtn
 ```
 
-**설명**: 오늘의 전력 출력 제어 예측 데이터를 조회합니다.
+**설명**: 가장 최근 생성시간(crtnTm) 기준의 전력 출력 제어 예측 데이터를 조회합니다.
 
 **응답 예시**:
 ```json
@@ -240,12 +222,12 @@ GET /api/sukub-operation/latest
 }
 ```
 
-#### 6.2 금일 운영 정보 조회
+#### 6.2 최근 24시간 운영 정보 조회
 ```
-GET /api/sukub-operation/today
+GET /api/sukub-operation/last-24h
 ```
 
-**설명**: 오늘의 전력 수급 운영 데이터 목록을 조회합니다.
+**설명**: 최근 24시간의 전력 수급 운영 데이터 목록을 조회합니다.
 
 **응답**: `SukubMDto` 리스트
 
@@ -271,36 +253,74 @@ GET /api/sukub-operation/today
 GET /api/jeju-weather/current
 ```
 
-**설명**: 제주시의 실황(T1H/PTY/VEC/WSD) 및 예보(SKY/PTY) 데이터를 조회합니다.
+**설명**: 제주시의 실황(T1H/PTY/VEC/WSD) 및 예보(SKY/PTY) 데이터를 조회합니다. (기상청 초단기 실황/예보 API 기준)
 
 **응답 예시**:
 ```json
 {
-  "temperature": 25.5,
-  "precipitationType": "없음",
-  "windDirection": 180,
-  "windSpeed": 3.5,
-  "sky": "맑음",
-  "forecast": {
-    "sky": "구름많음",
-    "pty": "없음"
-  }
+  "success": true,
+  "ncst_success": true,
+  "ncst_tempC": 25.5,
+  "ncst_windMs": 3.5,
+  "ncst_windDirDeg": 180,
+  "ncst_ptyCode": 0,
+  "ncst_ptyText": "없음",
+  "ncst_baseDate": "20251029",
+  "ncst_baseTime": "1200",
+  "fcst_success": true,
+  "fcst_skyCode": 1,
+  "fcst_skyText": "맑음",
+  "fcst_ptyCode": 0,
+  "fcst_ptyText": "없음",
+  "fcst_baseDate": "20251029",
+  "fcst_baseTime": "1230",
+  "fcst_targetDate": "20251029",
+  "fcst_targetTime": "1300"
 }
 ```
 
-**응답**: 기상청 API 기반 실황 및 예보 데이터
+**응답 필드**:
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| success | Boolean | 전체 요청 성공 여부 |
+| ncst_success | Boolean | 실황 데이터 수집 성공 여부 |
+| ncst_tempC | Number | 현재 기온 (°C) |
+| ncst_windMs | Number | 현재 풍속 (m/s) |
+| ncst_windDirDeg | Number | 현재 풍향 (deg) |
+| ncst_ptyCode | Number | 강수 형태 코드(0:없음, 1:비, 2:비/눈, 3:눈, 5:빗방울, 6:빗방울/눈날림, 7:눈날림) |
+| ncst_ptyText | String | 강수 형태 텍스트 |
+| ncst_baseDate | String | 실황 기준일자 (yyyyMMdd) |
+| ncst_baseTime | String | 실황 기준시각 (HHmm, HH00) |
+| fcst_success | Boolean | 예보 데이터 수집 성공 여부 |
+| fcst_skyCode | Number | 하늘상태 코드(1:맑음, 3:구름많음, 4:흐림) |
+| fcst_skyText | String | 하늘상태 텍스트 |
+| fcst_ptyCode | Number | 예보 강수 형태 코드 |
+| fcst_ptyText | String | 예보 강수 형태 텍스트 |
+| fcst_baseDate | String | 예보 기준일자 (yyyyMMdd) |
+| fcst_baseTime | String | 예보 기준시각 (HHmm, HH30) |
+| fcst_targetDate | String | 예보 대상일자 (yyyyMMdd) |
+| fcst_targetTime | String | 예보 대상시각 (HHmm) |
+
+**응답**: 기상청 초단기 실황/예보 API 기반 데이터를 통합한 응답
+
+추가 정보(실패 시 포함될 수 있음):
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| reason | String | 실패 사유(예: missing_key, empty_body, xml_error:..., auth_error:...) |
 
 ---
 
 ### 8. 신재생 발전 예측 (Renewable Energy Generation Predict)
 제주 신재생 에너지 발전 예측 정보를 제공합니다.
 
-#### 8.1 금일 발전 예측 차트 데이터
+#### 8.1 최신 생성시간 기준 태양광 발전 예측 조회
 ```
-GET /api/re-gen-predict/today
+GET /api/re-gen-predict/latest-crtn
 ```
 
-**설명**: 오늘의 신재생 에너지 발전 예측 차트 데이터를 조회합니다.
+**설명**: 가장 최근 생성시간(crtnTm) 기준의 태양광 발전 예측 데이터를 조회합니다. 최근 49시간 데이터를 반환합니다.
+
+**연료원 구분**: SOLAR (코드: 13) — 엔드포인트로 고정되며 응답 필드에는 별도 포함되지 않습니다.
 
 **응답 예시**:
 ```json
@@ -330,14 +350,42 @@ GET /api/re-gen-predict/today
 | essDisc | Double | ESS 방전량 (MWh) |
 | essCapa | Double | ESS 용량 (MWh) |
 
-#### 8.2 금일 ESS 운영 데이터
+#### 8.2 최신 생성시간 기준 풍력 발전 예측 조회
 ```
-GET /api/re-gen-predict/ess
+GET /api/re-gen-predict/wind/latest-crtn
 ```
 
-**설명**: 오늘의 ESS(에너지 저장 시스템) 운영 데이터를 조회합니다.
+**설명**: 가장 최근 생성시간(crtnTm) 기준의 풍력 발전 예측 데이터를 조회합니다.
 
-**응답**: `FcstGenDaChartDto` 리스트 (8.1과 동일한 형식)
+**연료원 구분**: WIND (코드: 16) — 엔드포인트로 고정되며 응답 필드에는 별도 포함되지 않습니다.
+
+**응답 예시**:
+```json
+[
+  {
+    "fcstTm": "202310101300",
+    "fcstQgen": 450.7,
+    "fcstQgmx": 520.0,
+    "fcstQgmn": 380.0,
+    "fcstCapa": 700.0,
+    "essChrg": 20.1,
+    "essDisc": 18.4,
+    "essCapa": 90.0
+  }
+]
+```
+
+**응답 필드**:
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| fcstTm | String | 예측 시간 (yyyyMMddHHmm) |
+| fcstQgen | Double | 최종 발전량 (MW) |
+| fcstQgmx | Double | 예측 최대 발전량 (MW) |
+| fcstQgmn | Double | 예측 최소 발전량 (MW) |
+| fcstCapa | Double | 예측 설비용량 (MW) |
+| essChrg | Double | ESS 충전량 (MWh) |
+| essDisc | Double | ESS 방전량 (MWh) |
+| essCapa | Double | ESS 용량 (MWh) |
 
 **데이터 소스**: `REP_DATA_RE_FCST_GEN_DA`
 
@@ -360,7 +408,7 @@ GET /api/re-gen-predict/ess
   "status": 500,
   "error": "Internal Server Error",
   "message": "데이터 조회 중 오류가 발생했습니다.",
-  "path": "/api/demand-predict/today"
+  "path": "/api/demand-predict/latest-crtn"
 }
 ```
 
@@ -407,12 +455,17 @@ kma.key=247cb2bdaeee98b1922e4a431b59d2e477c23eed00c0180 0189dc1f5255eb130
 
 #### 1. 수요 예측 조회
 ```bash
-curl -X GET http://localhost:8080/api/demand-predict/today
+curl -X GET http://localhost:8080/api/demand-predict/latest-crtn
 ```
 
 #### 2. 최신 기상 예측 조회
 ```bash
 curl -X GET http://localhost:8080/api/forecast-predict/latest
+```
+
+#### 2-2. 최근 48시간 기상 예측 조회
+```bash
+curl -X GET http://localhost:8080/api/forecast-predict/last-48h
 ```
 
 #### 3. 금일 발전 정보 조회
@@ -425,9 +478,34 @@ curl -X GET http://localhost:8080/api/hg-gen-info/today
 curl -X GET http://localhost:8080/api/sukub-operation/latest
 ```
 
+#### 4-2. 최근 24시간 숙비 운영 정보 조회
+```bash
+curl -X GET http://localhost:8080/api/sukub-operation/last-24h
+```
+
 #### 5. 현재 기상 정보 조회
 ```bash
 curl -X GET http://localhost:8080/api/jeju-weather/current
+```
+
+#### 6. 재생에너지 예측(태양광) 최신 CRTN 조회
+```bash
+curl -X GET http://localhost:8080/api/re-gen-predict/latest-crtn
+```
+
+#### 7. 재생에너지 예측(풍력) 최신 CRTN 조회
+```bash
+curl -X GET http://localhost:8080/api/re-gen-predict/wind/latest-crtn
+```
+
+#### 8. 제주 출력제어 예측 최신 CRTN 조회
+```bash
+curl -X GET http://localhost:8080/api/jeju-curt-predict/latest-crtn
+```
+
+#### 9. 수소 발전 예측(단지) 금일 조회
+```bash
+curl -X GET http://localhost:8080/api/hg-gen-predict/today
 ```
 
 ---
@@ -465,4 +543,7 @@ curl -X GET http://localhost:8080/api/jeju-weather/current
 ## 변경 이력
 | 버전 | 날짜 | 변경 내용 | 작성자 |
 |------|------|----------|--------|
+| 1.3 | 2025-10-29 | JejuWeather를 KMA 백업 스펙으로 갱신, 응답 필드/예시/에러 경로 최신화 | - |
+| 1.2 | 2025-10-29 | 프론트 사용 API만 남기고 정리 (미사용 엔드포인트 제거) | - |
+| 1.1 | 2025-01-XX | 실제 구현에 맞게 엔드포인트 수정 (latest-crtn, last-24h, wind 엔드포인트 추가) | - |
 | 1.0 | 2025-10-10 | 초안 작성 | - |
