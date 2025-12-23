@@ -308,6 +308,22 @@ GET /api/jeju-weather/current
 |------|------|------|
 | reason | String | 실패 사유(예: missing_key, empty_body, xml_error:..., auth_error:...) |
 
+#### 7.2 지역별 현재 기상 정보 조회
+```
+GET /api/jeju-weather/region?nx={nx}&ny={ny}
+```
+
+**설명**: `nx`, `ny` 격자 좌표에 해당하는 지역의 실황(T1H/PTY/VEC/WSD) 및 예보(SKY/PTY) 데이터를 조회합니다.  
+기본값은 제주시 좌표 `nx=53`, `ny=38` 입니다.
+
+**요청 파라미터**:
+| 파라미터 | 타입 | 필수 | 기본값 | 설명 |
+|----------|------|------|--------|------|
+| nx | int | 아니오 | 53 | 기상청 격자 X 좌표 |
+| ny | int | 아니오 | 38 | 기상청 격자 Y 좌표 |
+
+**응답**: 구조 및 필드는 7.1과 동일하며, 요청한 격자 위치의 값을 반환합니다.
+
 ---
 
 ### 8. 신재생 발전 예측 (Renewable Energy Generation Predict)
@@ -386,6 +402,17 @@ GET /api/re-gen-predict/wind/latest-crtn
 | essChrg | Double | ESS 충전량 (MWh) |
 | essDisc | Double | ESS 방전량 (MWh) |
 | essCapa | Double | ESS 용량 (MWh) |
+
+#### 8.3 금일 ESS 운전 정보(태양광 기준) 조회
+```
+GET /api/re-gen-predict/ess
+```
+
+**설명**: 오늘 날짜 기준으로, 태양광(SOLAR) 예측 데이터에서 ESS 충전/방전/용량 정보를 포함한 시계열을 조회합니다.  
+`fcstTm` 이 오늘 날짜(yyyyMMdd)로 시작하는 레코드만 반환합니다.
+
+**응답**: `FcstGenDaChartDto` 리스트  
+응답 필드는 8.1, 8.2와 동일합니다.
 
 **데이터 소스**: `REP_DATA_RE_FCST_GEN_DA`
 
@@ -543,6 +570,7 @@ curl -X GET http://localhost:8080/api/hg-gen-predict/today
 ## 변경 이력
 | 버전 | 날짜 | 변경 내용 | 작성자 |
 |------|------|----------|--------|
+| 1.4 | 2025-12-16 | JejuWeather 지역별 조회(region) 및 재생에너지 ESS 운전(ess) API 명세 추가 | - |
 | 1.3 | 2025-10-29 | JejuWeather를 KMA 백업 스펙으로 갱신, 응답 필드/예시/에러 경로 최신화 | - |
 | 1.2 | 2025-10-29 | 프론트 사용 API만 남기고 정리 (미사용 엔드포인트 제거) | - |
 | 1.1 | 2025-01-XX | 실제 구현에 맞게 엔드포인트 수정 (latest-crtn, last-24h, wind 엔드포인트 추가) | - |
