@@ -21,7 +21,7 @@
 제주 전력 수요 예측 데이터를 제공합니다.
 
 #### 1.1 최신 생성시간 기준 수요 예측 조회
-```
+```http
 GET /api/demand-predict/latest-crtn
 ```
 
@@ -57,7 +57,7 @@ GET /api/demand-predict/latest-crtn
 제주 기상 예측 정보를 제공합니다.
 
 #### 2.1 최신 기상 예측 조회
-```
+```http
 GET /api/forecast-predict/latest
 ```
 
@@ -88,7 +88,7 @@ GET /api/forecast-predict/latest
 | fcstPsfc | BigDecimal | 기압 (hPa) |
 
 #### 2.2 최근 48시간 예측
-```
+```http
 GET /api/forecast-predict/last-48h
 ```
 
@@ -104,7 +104,7 @@ GET /api/forecast-predict/last-48h
 제주 수소 발전 실측 정보를 제공합니다.
 
 #### 3.1 금일 발전 정보 조회
-```
+```http
 GET /api/hg-gen-info/today
 ```
 
@@ -138,7 +138,7 @@ GET /api/hg-gen-info/today
 제주 수소 발전 예측 정보를 제공합니다.
 
 #### 4.1 금일 발전 예측 조회
-```
+```http
 GET /api/hg-gen-predict/today
 ```
 
@@ -172,7 +172,7 @@ GET /api/hg-gen-predict/today
 제주 전력 출력 제어 예측 정보를 제공합니다.
 
 #### 5.1 최신 생성시간 기준 출력 제어 예측 조회
-```
+```http
 GET /api/jeju-curt-predict/latest-crtn
 ```
 
@@ -204,7 +204,7 @@ GET /api/jeju-curt-predict/latest-crtn
 제주 전력 수급 운영 정보를 제공합니다.
 
 #### 6.1 최신 운영 정보 조회
-```
+```http
 GET /api/sukub-operation/latest
 ```
 
@@ -223,7 +223,7 @@ GET /api/sukub-operation/latest
 ```
 
 #### 6.2 최근 24시간 운영 정보 조회
-```
+```http
 GET /api/sukub-operation/last-24h
 ```
 
@@ -249,7 +249,7 @@ GET /api/sukub-operation/last-24h
 제주 실시간 기상 정보를 제공합니다.
 
 #### 7.1 현재 기상 정보 조회
-```
+```http
 GET /api/jeju-weather/current
 ```
 
@@ -309,7 +309,7 @@ GET /api/jeju-weather/current
 | reason | String | 실패 사유(예: missing_key, empty_body, xml_error:..., auth_error:...) |
 
 #### 7.2 지역별 현재 기상 정보 조회
-```
+```http
 GET /api/jeju-weather/region?nx={nx}&ny={ny}
 ```
 
@@ -330,7 +330,7 @@ GET /api/jeju-weather/region?nx={nx}&ny={ny}
 제주 신재생 에너지 발전 예측 정보를 제공합니다.
 
 #### 8.1 최신 생성시간 기준 태양광 발전 예측 조회
-```
+```http
 GET /api/re-gen-predict/latest-crtn
 ```
 
@@ -367,7 +367,7 @@ GET /api/re-gen-predict/latest-crtn
 | essCapa | Double | ESS 용량 (MWh) |
 
 #### 8.2 최신 생성시간 기준 풍력 발전 예측 조회
-```
+```http
 GET /api/re-gen-predict/wind/latest-crtn
 ```
 
@@ -404,7 +404,7 @@ GET /api/re-gen-predict/wind/latest-crtn
 | essCapa | Double | ESS 용량 (MWh) |
 
 #### 8.3 금일 ESS 운전 정보(태양광 기준) 조회
-```
+```http
 GET /api/re-gen-predict/ess
 ```
 
