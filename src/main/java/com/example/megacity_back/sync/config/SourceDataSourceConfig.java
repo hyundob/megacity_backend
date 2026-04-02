@@ -25,7 +25,7 @@ import java.util.Objects;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "sync.source.datasource.url")
+@ConditionalOnProperty(name = "sync.source.datasource.url", matchIfMissing = false)
 public class SourceDataSourceConfig {
 
     private final DataSyncProperties props;
