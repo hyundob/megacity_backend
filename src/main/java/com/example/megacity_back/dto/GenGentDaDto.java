@@ -9,6 +9,7 @@ import lombok.*;
 @Builder
 public class GenGentDaDto {
     private String areaGrpCd;
+    private String areaGrpId;
     private String fcstTm;
     private double fcstQgen;
     private double fcstCapa;

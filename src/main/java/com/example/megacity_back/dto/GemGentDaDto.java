@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class GemGentDaDto {
     private String areaGrpCd;
+    private String areaGrpId;
     private String tm;
     private double hgenProd;
     private double hgenCapa;
