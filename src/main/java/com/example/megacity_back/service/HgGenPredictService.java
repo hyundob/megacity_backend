@@ -17,9 +17,10 @@ public class HgGenPredictService {
     public List<GenGentDaDto> getTodayForecastGeneration() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        return repository.findByAreaGrpCdAndFcstTmStartingWith("SEOUL", today).stream()
+        return repository.findByFcstTmStartingWith(today).stream()
                 .map(e -> GenGentDaDto.builder()
                         .areaGrpCd(e.getAreaGrpCd())
+                        .areaGrpId(e.getAreaGrpId())
                         .fcstTm(e.getFcstTm())
                         .fcstQgen(e.getFcstQgen() != null ? e.getFcstQgen().doubleValue() : 0.0)
                         .fcstCapa(e.getFcstCapa() != null ? e.getFcstCapa().doubleValue() : 0.0)

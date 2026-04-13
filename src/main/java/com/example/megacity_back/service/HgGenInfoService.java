@@ -17,9 +17,10 @@ public class HgGenInfoService {
     public List<GemGentDaDto> getTodayGeneration() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        return repository.findByAreaGrpCdAndTmStartingWith("SEOUL", today).stream()
+        return repository.findByTmStartingWith(today).stream()
                 .map(e -> GemGentDaDto.builder()
                         .areaGrpCd(e.getAreaGrpCd())
+                        .areaGrpId(e.getAreaGrpId())
                         .tm(e.getTm())
                         .hgenProd(e.getHgenProd() != null ? e.getHgenProd().doubleValue() : 0.0)
                         .hgenCapa(e.getHgenCapa() != null ? e.getHgenCapa().doubleValue() : 0.0)

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RepDataHgFcstGenGentDaRepository extends CrudRepository<RepDataHgFcstGenGentDa, FcstGenGentDaId> {
     List<RepDataHgFcstGenGentDa> findByAreaGrpCdAndFcstTmStartingWith(String areaGrpCd, String fcstTmPrefix);
+    List<RepDataHgFcstGenGentDa> findByFcstTmStartingWith(String fcstTmPrefix);
 }

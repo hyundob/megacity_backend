@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface RepDataHgMeasGemGentDaRepository extends CrudRepository<RepDataHgMeasGemGentDa, GemGentDaId> {
     List<RepDataHgMeasGemGentDa> findByAreaGrpCdAndTmStartingWith(String areaGrpCd, String fcstTmPrefix);
+    List<RepDataHgMeasGemGentDa> findByTmStartingWith(String tmPrefix);
 }
