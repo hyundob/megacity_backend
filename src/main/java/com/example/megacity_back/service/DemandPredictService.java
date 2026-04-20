@@ -3,6 +3,7 @@ package com.example.megacity_back.service;
 import com.example.megacity_back.dto.FcstLfdDaDto;
 import com.example.megacity_back.entity.RepDataReFcstLfdDa;
 import com.example.megacity_back.repository.RepDataReFcstLfdDaRepository;
+import com.example.megacity_back.exception.DataNotFoundException;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class DemandPredictService {
     public List<FcstLfdDaDto> getLatestCrtnTmForecast() {
         // 최신 CRTN_TM 조회
         RepDataReFcstLfdDa latest = repository.findTopByOrderByCrtnTmDesc()
-                .orElseThrow(() -> new RuntimeException("전력 수요 예측 데이터 없음"));
+                .orElseThrow(() -> new DataNotFoundException("전력 수요 예측 데이터 없음"));
 
         String latestCrtnTm = latest.getCrtnTm();
 

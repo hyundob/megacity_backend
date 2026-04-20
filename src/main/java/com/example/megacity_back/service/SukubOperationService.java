@@ -3,6 +3,7 @@ package com.example.megacity_back.service;
 import com.example.megacity_back.dto.SukubMDto;
 import com.example.megacity_back.entity.RepDataReKpxJejuSukubM;
 import com.example.megacity_back.repository.RepDataReKpxJejuSukubMRepository;
+import com.example.megacity_back.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class SukubOperationService {
 
     public SukubMDto getLatestOperation() {
         RepDataReKpxJejuSukubM latest = repository.findTopByOrderByTmDesc()
-                .orElseThrow(() -> new RuntimeException("데이터 없음"));
+                .orElseThrow(() -> new DataNotFoundException("데이터 없음"));
 
         return new SukubMDto(
                 latest.getTm(),
@@ -50,7 +51,7 @@ public class SukubOperationService {
     public List<SukubMDto> getLast24hOperation() {
         // 최근 데이터 조회
         RepDataReKpxJejuSukubM latest = repository.findTopByOrderByTmDesc()
-                .orElseThrow(() -> new RuntimeException("데이터 없음"));
+                .orElseThrow(() -> new DataNotFoundException("데이터 없음"));
 
         String latestTm = latest.getTm();
 

@@ -3,6 +3,7 @@ package com.example.megacity_back.service;
 import com.example.megacity_back.dto.ForeCastDto;
 import com.example.megacity_back.entity.RepDataHgFcstNwpDa;
 import com.example.megacity_back.repository.RepDataHgFcstNwpDaRepository;
+import com.example.megacity_back.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class ForecastPredictService {
 
     public ForeCastDto getLatestWeatherForecast() {
     RepDataHgFcstNwpDa latest = repository.findTopByOrderByFcstTmDesc()
-            .orElseThrow(() -> new RuntimeException("예보 데이터 없음"));
+            .orElseThrow(() -> new DataNotFoundException("예보 데이터 없음"));
 
         return new ForeCastDto(
                 latest.getCrtnTm(),
@@ -54,7 +55,7 @@ public class ForecastPredictService {
 
     public List<ForeCastDto> getLast48hForecast() {
         RepDataHgFcstNwpDa latest = repository.findTopByOrderByFcstTmDesc()
-                .orElseThrow(() -> new RuntimeException("예보 데이터 없음"));
+                .orElseThrow(() -> new DataNotFoundException("예보 데이터 없음"));
 
         String latestFcst = latest.getFcstTm();
 

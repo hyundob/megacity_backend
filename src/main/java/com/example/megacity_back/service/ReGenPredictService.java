@@ -3,6 +3,7 @@ package com.example.megacity_back.service;
 import com.example.megacity_back.dto.FcstGenDaChartDto;
 import com.example.megacity_back.entity.RepDataReFcstGenDa;
 import com.example.megacity_back.repository.RepDataReFcstGenDaRepository;
+import com.example.megacity_back.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ReGenPredictService {
     public List<FcstGenDaChartDto> getLast49SolarForecast() {
         // FUEL_TP_CD = 13 (태양광), 최신 CRTN_TM의 모든 예측 데이터
         RepDataReFcstGenDa latest = repository.findTopByFuelTpCdOrderByCrtnTmDesc("13")
-                .orElseThrow(() -> new RuntimeException("태양광 예측 데이터 없음"));
+                .orElseThrow(() -> new DataNotFoundException("태양광 예측 데이터 없음"));
 
         String latestCrtnTm = latest.getCrtnTm();
 
@@ -63,7 +64,7 @@ public class ReGenPredictService {
     public List<FcstGenDaChartDto> getLatestWindForecast() {
         // FUEL_TP_CD = 16 (풍력), 최신 CRTN_TM의 모든 예측 데이터
         RepDataReFcstGenDa latest = repository.findTopByFuelTpCdOrderByCrtnTmDesc("16")
-                .orElseThrow(() -> new RuntimeException("풍력 예측 데이터 없음"));
+                .orElseThrow(() -> new DataNotFoundException("풍력 예측 데이터 없음"));
 
         String latestCrtnTm = latest.getCrtnTm();
 
