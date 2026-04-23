@@ -2,8 +2,8 @@ package com.example.megacity_back.sync.syncer.impl;
 
 import com.example.megacity_back.entity.RepDataHgMeasGemGentDa;
 import com.example.megacity_back.repository.RepDataHgMeasGemGentDaRepository;
+import com.example.megacity_back.sync.config.SyncerContext;
 import com.example.megacity_back.sync.syncer.AbstractTableSyncer;
-import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -12,10 +12,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class GemGentDaSyncer extends AbstractTableSyncer<RepDataHgMeasGemGentDa> {
 
     private final RepDataHgMeasGemGentDaRepository repo;
+
+    public GemGentDaSyncer(SyncerContext ctx, RepDataHgMeasGemGentDaRepository repo) {
+        super(ctx);
+        this.repo = repo;
+    }
 
     @Override
     public String tableName() {

@@ -5,10 +5,9 @@ import com.example.megacity_back.entity.SyncLog;
 import com.example.megacity_back.repository.SyncCheckpointRepository;
 import com.example.megacity_back.repository.SyncLogRepository;
 import com.example.megacity_back.sync.config.DataSyncProperties;
+import com.example.megacity_back.sync.config.SyncerContext;
 import com.example.megacity_back.sync.metrics.SyncMetrics;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -34,21 +33,19 @@ import java.util.Objects;
 @Slf4j
 public abstract class AbstractTableSyncer<T> implements TableSyncer {
 
-    @Autowired
-    private SyncCheckpointRepository checkpointRepo;
+    private final SyncCheckpointRepository checkpointRepo;
+    private final SyncLogRepository logRepo;
+    private final SyncMetrics metrics;
+    private final DataSyncProperties props;
+    private final JdbcTemplate sourceJdbcTemplate;
 
-    @Autowired
-    private SyncLogRepository logRepo;
-
-    @Autowired
-    private SyncMetrics metrics;
-
-    @Autowired
-    private DataSyncProperties props;
-
-    @Autowired(required = false)
-    @Qualifier("sourceJdbcTemplate")
-    private JdbcTemplate sourceJdbcTemplate;
+    protected AbstractTableSyncer(SyncerContext ctx) {
+        this.checkpointRepo = ctx.getCheckpointRepo();
+        this.logRepo = ctx.getLogRepo();
+        this.metrics = ctx.getMetrics();
+        this.props = ctx.getProps();
+        this.sourceJdbcTemplate = ctx.getSourceJdbcTemplate();
+    }
 
     // ── 구현체가 제공 ──────────────────────────────────────
 

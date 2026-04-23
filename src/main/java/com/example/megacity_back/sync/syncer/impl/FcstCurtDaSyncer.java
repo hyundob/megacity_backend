@@ -2,8 +2,8 @@ package com.example.megacity_back.sync.syncer.impl;
 
 import com.example.megacity_back.entity.RepDataP2hFcstCurtDa;
 import com.example.megacity_back.repository.RepDataP2hFcstCurtDaRepository;
+import com.example.megacity_back.sync.config.SyncerContext;
 import com.example.megacity_back.sync.syncer.AbstractTableSyncer;
-import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -12,10 +12,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class FcstCurtDaSyncer extends AbstractTableSyncer<RepDataP2hFcstCurtDa> {
 
     private final RepDataP2hFcstCurtDaRepository repo;
+
+    public FcstCurtDaSyncer(SyncerContext ctx, RepDataP2hFcstCurtDaRepository repo) {
+        super(ctx);
+        this.repo = repo;
+    }
 
     @Override
     public String tableName() {
