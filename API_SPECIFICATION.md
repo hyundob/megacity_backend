@@ -68,6 +68,7 @@ GET /api/forecast-predict/latest
 {
   "crtnTm": "202310101200",
   "fcstTm": "202310101300",
+  "areaGrpId": "01",
   "fcstSrad": 500.12345,
   "fcstTemp": 25.5,
   "fcstHumi": 65.2,
@@ -81,13 +82,46 @@ GET /api/forecast-predict/latest
 |------|------|------|
 | crtnTm | String | 생성시간 (yyyyMMddHHmm) |
 | fcstTm | String | 예측시간 (yyyyMMddHHmm) |
+| areaGrpId | String | 지역 그룹 ID |
 | fcstSrad | BigDecimal | 일사량 |
 | fcstTemp | BigDecimal | 온도 (°C) |
 | fcstHumi | BigDecimal | 습도 (%) |
 | fcstWspd | BigDecimal | 풍속 (m/s) |
 | fcstPsfc | BigDecimal | 기압 (hPa) |
 
-#### 2.2 최근 48시간 예측
+#### 2.2 전체 기상 예측 목록(페이징) 조회
+```http
+GET /api/forecast-predict/all?page={page}&size={size}
+```
+
+**설명**: 전체 기상 예측 데이터를 페이징하여 조회합니다.
+
+**요청 파라미터**:
+| 파라미터 | 타입 | 필수 | 기본값 | 설명 |
+|----------|------|------|--------|------|
+| page | int | 아니오 | 0 | 페이지 번호(0부터 시작) |
+| size | int | 아니오 | 100 | 페이지 크기 |
+
+**응답**: `Page<ForeCastDto>`  
+응답 데이터의 필드는 2.1과 동일합니다.
+
+#### 2.3 기상 예측 요약 목록(페이징) 조회
+```http
+GET /api/forecast-predict/summary?page={page}&size={size}
+```
+
+**설명**: 기상 예측 요약 목록을 페이징하여 조회합니다.
+
+**요청 파라미터**:
+| 파라미터 | 타입 | 필수 | 기본값 | 설명 |
+|----------|------|------|--------|------|
+| page | int | 아니오 | 0 | 페이지 번호(0부터 시작) |
+| size | int | 아니오 | 100 | 페이지 크기 |
+
+**응답**: `Page<ForeCastDto>`  
+응답 데이터의 필드는 2.1과 동일합니다.
+
+#### 2.4 최근 48시간 예측
 ```http
 GET /api/forecast-predict/last-48h
 ```
@@ -495,6 +529,16 @@ curl -X GET http://localhost:8080/api/forecast-predict/latest
 curl -X GET http://localhost:8080/api/forecast-predict/last-48h
 ```
 
+#### 2-3. 전체 기상 예측 목록(페이징) 조회
+```bash
+curl -X GET "http://localhost:8080/api/forecast-predict/all?page=0&size=100"
+```
+
+#### 2-4. 기상 예측 요약 목록(페이징) 조회
+```bash
+curl -X GET "http://localhost:8080/api/forecast-predict/summary?page=0&size=100"
+```
+
 #### 3. 금일 발전 정보 조회
 ```bash
 curl -X GET http://localhost:8080/api/hg-gen-info/today
@@ -570,6 +614,7 @@ curl -X GET http://localhost:8080/api/hg-gen-predict/today
 ## 변경 이력
 | 버전 | 날짜 | 변경 내용 | 작성자 |
 |------|------|----------|--------|
+| 1.5 | 2026-05-14 | Forecast Predict의 all/summary 페이징 API 및 ForeCastDto의 areaGrpId 필드 명세 반영 | - |
 | 1.4 | 2025-12-16 | JejuWeather 지역별 조회(region) 및 재생에너지 ESS 운전(ess) API 명세 추가 | - |
 | 1.3 | 2025-10-29 | JejuWeather를 KMA 백업 스펙으로 갱신, 응답 필드/예시/에러 경로 최신화 | - |
 | 1.2 | 2025-10-29 | 프론트 사용 API만 남기고 정리 (미사용 엔드포인트 제거) | - |
