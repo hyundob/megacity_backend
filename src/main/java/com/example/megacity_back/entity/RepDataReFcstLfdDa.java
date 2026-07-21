@@ -70,4 +70,3 @@ public class RepDataReFcstLfdDa {
         this.updDate = LocalDateTime.now();
     }
 }
-

@@ -79,4 +79,3 @@ public class RepDataHgFcstNwpDa {
         this.updDate = LocalDateTime.now();
     }
 }
-
