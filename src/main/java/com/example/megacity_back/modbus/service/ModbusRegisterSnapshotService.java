@@ -3,7 +3,7 @@ package com.example.megacity_back.modbus.service;
 import com.example.megacity_back.entity.RepDataHgFcstGenGentDa;
 import com.example.megacity_back.entity.RepDataHgFcstNwpDa;
 import com.example.megacity_back.entity.RepDataHgMeasGemGentDa;
-import com.example.megacity_back.entity.RepDataP2hFcstCurtDa;
+import com.example.megacity_back.entity.RepDataHgFcstCurtDa;
 import com.example.megacity_back.entity.RepDataReFcstGenDa;
 import com.example.megacity_back.entity.RepDataReFcstLfdDa;
 import com.example.megacity_back.entity.RepDataReKpxJejuSukubM;
@@ -14,7 +14,7 @@ import com.example.megacity_back.modbus.model.ModbusRegisterMap;
 import com.example.megacity_back.repository.RepDataHgFcstGenGentDaRepository;
 import com.example.megacity_back.repository.RepDataHgFcstNwpDaRepository;
 import com.example.megacity_back.repository.RepDataHgMeasGemGentDaRepository;
-import com.example.megacity_back.repository.RepDataP2hFcstCurtDaRepository;
+import com.example.megacity_back.repository.RepDataHgFcstCurtDaRepository;
 import com.example.megacity_back.repository.RepDataReFcstGenDaRepository;
 import com.example.megacity_back.repository.RepDataReFcstLfdDaRepository;
 import com.example.megacity_back.repository.RepDataReKpxJejuSukubMRepository;
@@ -107,7 +107,7 @@ public class ModbusRegisterSnapshotService {
     private final RepDataHgFcstGenGentDaRepository hydrogenForecastRepository;
     private final RepDataHgFcstNwpDaRepository weatherForecastRepository;
     private final RepDataReKpxJejuSukubMRepository jejuOperationRepository;
-    private final RepDataP2hFcstCurtDaRepository jejuCurtRepository;
+    private final RepDataHgFcstCurtDaRepository jejuCurtRepository;
     private final RepDataReFcstLfdDaRepository demandRepository;
     private final RepDataReFcstGenDaRepository renewableRepository;
 
@@ -268,19 +268,19 @@ public class ModbusRegisterSnapshotService {
     }
 
     private void writeJejuCurtailment(ModbusRegisterMap.Builder builder, ZoneId zoneId) {
-        Optional<RepDataP2hFcstCurtDa> latest = jejuCurtRepository.findTopByOrderByCrtnTmDesc();
-        List<RepDataP2hFcstCurtDa> records = latest
+        Optional<RepDataHgFcstCurtDa> latest = jejuCurtRepository.findTopByOrderByCrtnTmDesc();
+        List<RepDataHgFcstCurtDa> records = latest
                 .map(item -> jejuCurtRepository.findByCrtnTmOrderByFcstTmAsc(item.getCrtnTm()))
                 .orElse(List.of());
 
-        builder.uint32(JEJU_CURT_START, latest.map(RepDataP2hFcstCurtDa::getCrtnTm)
+        builder.uint32(JEJU_CURT_START, latest.map(RepDataHgFcstCurtDa::getCrtnTm)
                 .map(value -> epochSeconds(value, zoneId))
                 .orElse(null));
 
-        List<RepDataP2hFcstCurtDa> timeline = uniqueForecastTimeline(records, RepDataP2hFcstCurtDa::getFcstTm);
+        List<RepDataHgFcstCurtDa> timeline = uniqueForecastTimeline(records, RepDataHgFcstCurtDa::getFcstTm);
         for (int leadIndex = 0; leadIndex <= 48; leadIndex++) {
             int base = JEJU_CURT_START + 2 + leadIndex * 8;
-            RepDataP2hFcstCurtDa record = leadIndex < timeline.size() ? timeline.get(leadIndex) : null;
+            RepDataHgFcstCurtDa record = leadIndex < timeline.size() ? timeline.get(leadIndex) : null;
 
             builder.uint32(base, epochSeconds(record == null ? null : record.getFcstTm(), zoneId));
             builder.uint16(base + 2, resolveLeadMinutes(

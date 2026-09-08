@@ -4,42 +4,38 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "REP_DATA_P2H_FCST_CURT_DA")
-@IdClass(FcstCurtDaId.class)
+@Table(name = "REP_DATA_RE_KPX_SMP_AREA_H")
+@IdClass(KpxSmpAreaHId.class)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RepDataP2hFcstCurtDa {
+public class RepDataReKpxSmpAreaH {
 
     @Id
-    @Column(name = "CRTN_TM", length = 12, nullable = false)
-    private String crtnTm;
+    @Column(name = "TRADE_DAY", length = 8, nullable = false)
+    private String tradeDay;
 
     @Id
-    @Column(name = "FCST_TM", length = 12, nullable = false)
-    private String fcstTm;
+    @Column(name = "TRADE_HOUR", precision = 2, scale = 0, nullable = false)
+    private BigDecimal tradeHour;
 
-    @Column(name = "LEAD_TM", length = 5)
-    private String leadTm;
+    @Id
+    @Column(name = "AREA_CD", length = 2, nullable = false)
+    private String areaCd;
 
-    @Column(name = "FCST_MINPW", precision = 7, scale = 2)
-    private BigDecimal fcstMinpw;
-
-    @Column(name = "FCST_CURT", precision = 7, scale = 2)
-    private BigDecimal fcstCurt;
+    @Column(name = "SMP", precision = 10, scale = 2)
+    private BigDecimal smp;
 
     @Column(name = "REG_DATE", nullable = false, updatable = false)
     private LocalDateTime regDate;
 
     @Column(name = "UPD_DATE", nullable = false, updatable = false)
     private LocalDateTime updDate;
-
     @PrePersist
     protected void onCreate() {
         this.regDate = LocalDateTime.now();

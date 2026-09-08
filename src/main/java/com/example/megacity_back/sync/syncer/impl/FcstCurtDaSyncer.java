@@ -1,7 +1,7 @@
 package com.example.megacity_back.sync.syncer.impl;
 
-import com.example.megacity_back.entity.RepDataP2hFcstCurtDa;
-import com.example.megacity_back.repository.RepDataP2hFcstCurtDaRepository;
+import com.example.megacity_back.entity.RepDataHgFcstCurtDa;
+import com.example.megacity_back.repository.RepDataHgFcstCurtDaRepository;
 import com.example.megacity_back.sync.config.SyncerContext;
 import com.example.megacity_back.sync.syncer.AbstractTableSyncer;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,23 +12,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
-public class FcstCurtDaSyncer extends AbstractTableSyncer<RepDataP2hFcstCurtDa> {
+public class FcstCurtDaSyncer extends AbstractTableSyncer<RepDataHgFcstCurtDa> {
 
-    private final RepDataP2hFcstCurtDaRepository repo;
+    private final RepDataHgFcstCurtDaRepository repo;
 
-    public FcstCurtDaSyncer(SyncerContext ctx, RepDataP2hFcstCurtDaRepository repo) {
+    public FcstCurtDaSyncer(SyncerContext ctx, RepDataHgFcstCurtDaRepository repo) {
         super(ctx);
         this.repo = repo;
     }
 
     @Override
     public String tableName() {
-        return "REP_DATA_P2H_FCST_CURT_DA";
+        return "REP_DATA_HG_FCST_CURT_DA";
     }
 
     @Override
-    protected RowMapper<RepDataP2hFcstCurtDa> rowMapper() {
-        return (rs, rowNum) -> RepDataP2hFcstCurtDa.builder()
+    protected RowMapper<RepDataHgFcstCurtDa> rowMapper() {
+        return (rs, rowNum) -> RepDataHgFcstCurtDa.builder()
                 .crtnTm(rs.getString("CRTN_TM"))
                 .fcstTm(rs.getString("FCST_TM"))
                 .leadTm(rs.getString("LEAD_TM"))
@@ -40,12 +40,12 @@ public class FcstCurtDaSyncer extends AbstractTableSyncer<RepDataP2hFcstCurtDa> 
     }
 
     @Override
-    protected void bulkUpsert(@NonNull List<RepDataP2hFcstCurtDa> records) {
+    protected void bulkUpsert(@NonNull List<RepDataHgFcstCurtDa> records) {
         repo.saveAll(records);
     }
 
     @Override
-    protected LocalDateTime extractUpdDate(RepDataP2hFcstCurtDa record) {
+    protected LocalDateTime extractUpdDate(RepDataHgFcstCurtDa record) {
         return record.getUpdDate();
     }
 }

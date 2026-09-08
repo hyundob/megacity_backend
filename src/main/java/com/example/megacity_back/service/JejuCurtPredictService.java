@@ -1,8 +1,8 @@
 package com.example.megacity_back.service;
 
 import com.example.megacity_back.dto.FcstCurtDaDto;
-import com.example.megacity_back.entity.RepDataP2hFcstCurtDa;
-import com.example.megacity_back.repository.RepDataP2hFcstCurtDaRepository;
+import com.example.megacity_back.entity.RepDataHgFcstCurtDa;
+import com.example.megacity_back.repository.RepDataHgFcstCurtDaRepository;
 import com.example.megacity_back.exception.DataNotFoundException;
 import lombok.*;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class JejuCurtPredictService {
-    private final RepDataP2hFcstCurtDaRepository repository;
+    private final RepDataHgFcstCurtDaRepository repository;
     public List<FcstCurtDaDto> getTodayCurtailment() {
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
@@ -29,7 +29,7 @@ public class JejuCurtPredictService {
 
     public List<FcstCurtDaDto> getLatestCrtnCurtailment() {
         // 최신 CRTN_TM 조회
-        RepDataP2hFcstCurtDa latest = repository.findTopByOrderByCrtnTmDesc()
+        RepDataHgFcstCurtDa latest = repository.findTopByOrderByCrtnTmDesc()
                 .orElseThrow(() -> new DataNotFoundException("출력제어 예측 데이터 없음"));
 
         String latestCrtnTm = latest.getCrtnTm();

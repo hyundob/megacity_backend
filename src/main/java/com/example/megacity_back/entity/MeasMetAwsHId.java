@@ -1,0 +1,31 @@
+package com.example.megacity_back.entity;
+
+import java.io.Serializable;
+import java.util.Objects;
+
+public class MeasMetAwsHId implements Serializable {
+
+    private String stnId;
+    private String tm;
+
+    public MeasMetAwsHId() {}
+
+    public MeasMetAwsHId(String stnId, String tm) {
+        this.stnId = stnId;
+        this.tm = tm;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MeasMetAwsHId)) return false;
+        MeasMetAwsHId that = (MeasMetAwsHId) o;
+        return Objects.equals(stnId, that.stnId) &&
+                Objects.equals(tm, that.tm);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stnId, tm);
+    }
+}
