@@ -35,7 +35,7 @@ public class SukubOperationService {
     }
 
     public List<SukubMDto> getTodayOperation() {
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String today = LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         return repository.findByTmStartingWith(today).stream()
                 .map(e -> new SukubMDto(
                         e.getTm(),

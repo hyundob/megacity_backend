@@ -24,7 +24,7 @@ public class SyncCheckpoint {
 
     /**
      * 소스 DB max(upd_date) 기준 watermark.
-     * 다음 싱크 쿼리: WHERE upd_date > lastWatermark ORDER BY upd_date ASC LIMIT batchSize
+     * 다음 실행은 이 시각도 포함해 재조회하며, 동일 시각 그룹 전체를 처리한 뒤 전진한다.
      */
     @Column(name = "LAST_WATERMARK")
     private LocalDateTime lastWatermark;

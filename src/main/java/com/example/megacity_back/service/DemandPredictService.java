@@ -17,7 +17,7 @@ public class DemandPredictService {
     private final RepDataReFcstLfdDaRepository repository;
 
     public List<FcstLfdDaDto> getTodayLoadForecast() {
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String today = LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         return repository.findByFcstTmStartingWith(today).stream()
                 .map(e -> FcstLfdDaDto.builder()

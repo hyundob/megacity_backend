@@ -63,11 +63,11 @@ public class RepDataMsMeasMetAwsH {
     @Column(name = "REG_DATE", nullable = false, updatable = false)
     private LocalDateTime regDate;
 
-    @Column(name = "UPD_DATE", nullable = false, updatable = false)
+    @Column(name = "UPD_DATE", nullable = false)
     private LocalDateTime updDate;
     @PrePersist
     protected void onCreate() {
-        this.regDate = LocalDateTime.now();
-        this.updDate = LocalDateTime.now();
+        if (this.regDate == null) this.regDate = LocalDateTime.now(java.time.ZoneId.of("Asia/Seoul"));
+        if (this.updDate == null) this.updDate = LocalDateTime.now(java.time.ZoneId.of("Asia/Seoul"));
     }
 }

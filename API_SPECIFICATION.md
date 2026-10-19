@@ -1,5 +1,7 @@
 # Megacity Back API 명세서
 
+> 2026-09-08 변경: `/api/forecast-predict/**`, `/api/hg-gen-predict/**`, `/api/hg-gen-info/**`는 폐기했습니다. 아래 해당 API 설명은 과거 참고용이며 현재 제공되지 않습니다. 활성 API는 수급·수요·발전·출력제어·기상청 날씨 및 신규 9개 테이블 조회입니다. 현재 OpenAPI(`/api-docs`)와 [운영 안내](OPERATIONS.md)를 우선하세요. 발전 조회는 `MEGACITY_MARKET_CODE` 또는 단일 시장 자동 선택을 사용하며, `/re-gen-predict/ess`도 같은 시장의 최신 회차 중 한국 날짜 기준 당일 자료를 반환합니다.
+
 ## 프로젝트 개요
 - **프로젝트명**: Megacity Back
 - **설명**: 제주 전력 데이터 및 예측 정보를 제공하는 REST API 서비스
@@ -505,7 +507,7 @@ spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
 
 # KMA (기상청) API Key
-kma.key=247cb2bdaeee98b1922e4a431b59d2e477c23eed00c0180 0189dc1f5255eb130
+kma.key=${KMA_KEY}
 ```
 
 ---

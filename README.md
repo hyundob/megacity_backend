@@ -1,5 +1,7 @@
 # megacity_backend
 
+현재 사용 범위, 실행 환경 변수, 동기화 복구 및 테스트 방법은 [OPERATIONS.md](OPERATIONS.md)를 참고하세요. 아래 내용은 기존 저장소 생성 템플릿입니다.
+
 
 
 ## Getting started

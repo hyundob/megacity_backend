@@ -38,8 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   4. 중단 복구 - watermark가 남아있어 재시작 후 중단 지점부터 재개
  *   5. SyncLog 기록 - 성공/실패 로그가 기록됨
  */
-@Testcontainers
-@SpringBootTest
+@Testcontainers(disabledWithoutDocker = true)
+@SpringBootTest(properties = {"modbus.enabled=false", "sync.scheduling-enabled=false", "kma.key="})
 @ContextConfiguration(initializers = DataSyncIntegrationTest.Initializer.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DataSyncIntegrationTest {

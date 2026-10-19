@@ -1,5 +1,7 @@
 # Modbus Register Map (v2)
 
+> 2026-09-08 변경: 수소 실측·수소 예측·수소단지 기상 블록은 주소만 유지하고 데이터 필드를 null(UINT all-ones / FLOAT32 NaN)로 제공합니다. 예비 레지스터는 0입니다. 활성 코드의 수급 시작 주소는 90401, 출력제어 90421, 수요 90821, 태양광 91921, 풍력 93421입니다. 아래 과거 표와 충돌하면 이 주소 및 현재 `ModbusRegisterSnapshotService`를 우선합니다. 블록 조회 실패는 해당 블록만 null 처리하며, 공통 카운터는 스냅샷 게시 횟수입니다. [운영 안내](OPERATIONS.md)도 참고하세요.
+
 본 문서는 백엔드 DTO/엔티티 구조(`AREA_GRP_CD`, `AREA_GRP_ID`, `TM`, `CRTN_TM`, `FCST_TM`)에 맞춰 Group 매핑과 레지스터 주소를 정리한 기준안이다.
 
 ## 1) NULL 예약값 규칙

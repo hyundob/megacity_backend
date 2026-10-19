@@ -13,7 +13,7 @@ import java.util.List;
  * 1분 주기 데이터 싱크 스케줄러.
  *
  * - 매 분 정각(0초)에 실행
- * - 7개 테이블을 순차 처리 (중첩 실행 방지)
+ * - 13개 활성 테이블을 순차 처리 (중첩 실행 방지)
  * - 소스 DB 미설정 시 각 syncer 가 skip 로그만 출력
  *
  * 운영 파라미터 (application.properties):
@@ -24,6 +24,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "sync.scheduling-enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 public class DataSyncScheduler {
 
@@ -33,9 +34,9 @@ public class DataSyncScheduler {
      * 매 분 0초에 전체 테이블 증분 싱크 실행.
      * Spring 기본 단일 스레드 스케줄러 사용 → 이전 실행이 끝나지 않으면 다음 트리거 대기.
      */
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 * * * * *", scheduler = "syncScheduler")
     public void syncAll() {
-        log.debug("[Sync] 스케줄 실행 시작 - {}", LocalDateTime.now());
+        log.debug("[Sync] 스케줄 실행 시작 - {}", LocalDateTime.now(java.time.ZoneId.of("Asia/Seoul")));
         for (TableSyncer syncer : syncers) {
             try {
                 syncer.sync();
@@ -44,7 +45,7 @@ public class DataSyncScheduler {
                 log.error("[Sync] {} 처리 중 예상치 못한 예외: {}", syncer.tableName(), e.getMessage(), e);
             }
         }
-        log.debug("[Sync] 스케줄 실행 완료 - {}", LocalDateTime.now());
+        log.debug("[Sync] 스케줄 실행 완료 - {}", LocalDateTime.now(java.time.ZoneId.of("Asia/Seoul")));
     }
 
     /**

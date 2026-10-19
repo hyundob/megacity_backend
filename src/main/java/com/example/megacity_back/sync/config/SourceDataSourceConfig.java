@@ -2,7 +2,6 @@ package com.example.megacity_back.sync.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,15 +23,17 @@ import java.util.Objects;
  */
 @Slf4j
 @Configuration
-@RequiredArgsConstructor
 @ConditionalOnProperty(name = "sync.source.datasource.url", matchIfMissing = false)
 public class SourceDataSourceConfig {
 
-    private final DataSyncProperties props;
+    @Bean
+    @org.springframework.boot.context.properties.ConfigurationProperties("sync.source.datasource")
+    public DataSyncProperties.SourceDatasource sourceConnectionProperties() {
+        return new DataSyncProperties.SourceDatasource();
+    }
 
     @Bean("sourceDataSource")
-    public DataSource sourceDataSource() {
-        DataSyncProperties.SourceDatasource src = props.getSourceDatasource();
+    public DataSource sourceDataSource(DataSyncProperties.SourceDatasource src) {
         log.info("[Sync] Source DataSource 초기화: url={}", src.getUrl());
 
         HikariConfig config = new HikariConfig();
@@ -49,9 +50,10 @@ public class SourceDataSourceConfig {
     }
 
     @Bean("sourceJdbcTemplate")
-    public JdbcTemplate sourceJdbcTemplate(@Qualifier("sourceDataSource") DataSource sourceDataSource) {
+    public JdbcTemplate sourceJdbcTemplate(@Qualifier("sourceDataSource") DataSource sourceDataSource,
+                                         DataSyncProperties.SourceDatasource src) {
         JdbcTemplate template = new JdbcTemplate(Objects.requireNonNull(sourceDataSource));
-        template.setQueryTimeout(props.getSourceDatasource().getSocketTimeout());
+        template.setQueryTimeout(src.getSocketTimeout());
         return template;
     }
 }

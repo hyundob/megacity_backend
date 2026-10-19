@@ -13,6 +13,21 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler({org.springframework.web.servlet.resource.NoResourceFoundException.class,
+            org.springframework.web.servlet.NoHandlerFoundException.class})
+    public ResponseEntity<Map<String, Object>> handleMissingRoute(Exception ex) {
+        log.debug("요청 경로 없음: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(errorBody("요청한 경로를 찾을 수 없습니다.", 404));
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class,
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class,
+            org.springframework.web.bind.MissingServletRequestParameterException.class})
+    public ResponseEntity<Map<String, Object>> handleBadRequest(Exception ex) {
+        return ResponseEntity.badRequest().body(errorBody("요청 파라미터를 확인해주세요.", 400));
+    }
+
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleDataNotFound(DataNotFoundException ex) {
         log.warn("데이터 없음: {}", ex.getMessage());
@@ -30,7 +45,7 @@ public class GlobalExceptionHandler {
         return Map.of(
                 "status", status,
                 "message", message,
-                "timestamp", LocalDateTime.now().toString()
+                "timestamp", LocalDateTime.now(java.time.ZoneId.of("Asia/Seoul")).toString()
         );
     }
 }

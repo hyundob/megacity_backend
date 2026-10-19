@@ -69,6 +69,11 @@ public final class ModbusRegisterMap {
             return this;
         }
 
+        public Builder overlay(ModbusRegisterMap section) {
+            registers.putAll(section.registersByDocumentAddress);
+            return this;
+        }
+
         public Builder uint16(int documentAddress, Integer value) {
             registers.put(documentAddress, ModbusRegisterCodec.encodeUint16(value));
             return this;

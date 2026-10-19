@@ -32,6 +32,7 @@ public class ModbusTcpServer implements SmartLifecycle {
     private ExecutorService acceptExecutor;
     private ExecutorService clientExecutor;
     private ServerSocket serverSocket;
+    private final java.util.Set<Socket> clients = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     public ModbusTcpServer(
             ModbusProperties properties,
@@ -52,7 +53,8 @@ public class ModbusTcpServer implements SmartLifecycle {
         try {
             serverSocket = new ServerSocket(properties.getPort(), 50, InetAddress.getByName(properties.getHost()));
             acceptExecutor = Executors.newSingleThreadExecutor();
-            clientExecutor = Executors.newCachedThreadPool();
+            clientExecutor = new java.util.concurrent.ThreadPoolExecutor(0, properties.getMaxClients(),
+                    60, java.util.concurrent.TimeUnit.SECONDS, new java.util.concurrent.SynchronousQueue<>());
             running.set(true);
 
             acceptExecutor.submit(this::acceptLoop);
@@ -66,7 +68,13 @@ public class ModbusTcpServer implements SmartLifecycle {
         while (running.get()) {
             try {
                 Socket client = serverSocket.accept();
-                clientExecutor.submit(() -> handleClient(client));
+                clients.add(client);
+                try {
+                    clientExecutor.submit(() -> handleClient(client));
+                } catch (java.util.concurrent.RejectedExecutionException rejected) {
+                    clients.remove(client);
+                    client.close();
+                }
             } catch (SocketException closedWhileStopping) {
                 if (running.get()) {
                     log.warn("[Modbus] Accept loop interrupted: {}", closedWhileStopping.getMessage());
@@ -98,7 +106,7 @@ public class ModbusTcpServer implements SmartLifecycle {
                 }
 
                 int remainingLength = ((header[4] & 0xFF) << 8) | (header[5] & 0xFF);
-                if (remainingLength < 2) {
+                if (remainingLength < 2 || remainingLength > 254) {
                     log.debug("[Modbus] Invalid length field from {}", socket.getRemoteSocketAddress());
                     return;
                 }
@@ -123,6 +131,8 @@ public class ModbusTcpServer implements SmartLifecycle {
             log.debug("[Modbus] Client disconnected: {}", e.getMessage());
         } catch (IOException e) {
             log.warn("[Modbus] Client I/O error: {}", e.getMessage());
+        } finally {
+            clients.remove(client);
         }
     }
 
@@ -146,6 +156,10 @@ public class ModbusTcpServer implements SmartLifecycle {
         if (clientExecutor != null) {
             clientExecutor.shutdownNow();
         }
+        clients.forEach(socket -> {
+            try { socket.close(); } catch (IOException ignored) { /* already closed */ }
+        });
+        clients.clear();
 
         log.info("[Modbus] TCP slave stopped");
     }

@@ -33,4 +33,7 @@ public class ModbusProperties {
     private String timeZone = "Asia/Seoul";
 
     private boolean allowFunction03Alias = true;
+
+    @Min(1)
+    private int maxClients = 32;
 }

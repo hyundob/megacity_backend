@@ -1,8 +1,5 @@
 package com.example.megacity_back.modbus.service;
 
-import com.example.megacity_back.entity.RepDataHgFcstGenGentDa;
-import com.example.megacity_back.entity.RepDataHgFcstNwpDa;
-import com.example.megacity_back.entity.RepDataHgMeasGemGentDa;
 import com.example.megacity_back.entity.RepDataHgFcstCurtDa;
 import com.example.megacity_back.entity.RepDataReFcstGenDa;
 import com.example.megacity_back.entity.RepDataReFcstLfdDa;
@@ -11,9 +8,6 @@ import com.example.megacity_back.modbus.config.ModbusProperties;
 import com.example.megacity_back.modbus.model.GroupDefinition;
 import com.example.megacity_back.modbus.model.ModbusRegisterCodec;
 import com.example.megacity_back.modbus.model.ModbusRegisterMap;
-import com.example.megacity_back.repository.RepDataHgFcstGenGentDaRepository;
-import com.example.megacity_back.repository.RepDataHgFcstNwpDaRepository;
-import com.example.megacity_back.repository.RepDataHgMeasGemGentDaRepository;
 import com.example.megacity_back.repository.RepDataHgFcstCurtDaRepository;
 import com.example.megacity_back.repository.RepDataReFcstGenDaRepository;
 import com.example.megacity_back.repository.RepDataReFcstLfdDaRepository;
@@ -103,12 +97,11 @@ public class ModbusRegisterSnapshotService {
     );
 
     private final ModbusProperties properties;
-    private final RepDataHgMeasGemGentDaRepository actualRepository;
-    private final RepDataHgFcstGenGentDaRepository hydrogenForecastRepository;
-    private final RepDataHgFcstNwpDaRepository weatherForecastRepository;
     private final RepDataReKpxJejuSukubMRepository jejuOperationRepository;
     private final RepDataHgFcstCurtDaRepository jejuCurtRepository;
     private final RepDataReFcstLfdDaRepository demandRepository;
+    private final com.example.megacity_back.service.GenerationMarketSelection marketSelection;
+
     private final RepDataReFcstGenDaRepository renewableRepository;
 
     private final AtomicReference<ModbusRegisterMap> snapshotRef = new AtomicReference<>(createEmptySnapshot());
@@ -123,8 +116,8 @@ public class ModbusRegisterSnapshotService {
         refreshSnapshot();
     }
 
-    @Scheduled(fixedDelayString = "${modbus.refresh-interval-ms:60000}")
-    public void refreshSnapshot() {
+    @Scheduled(fixedDelayString = "${modbus.refresh-interval-ms:60000}", scheduler = "modbusScheduler")
+    public synchronized void refreshSnapshot() {
         try {
             ZoneId zoneId = ZoneId.of(properties.getTimeZone());
             long nextCounter = (updateCounter.get() + 1) & ModbusRegisterCodec.UINT32_NULL;
@@ -133,14 +126,13 @@ public class ModbusRegisterSnapshotService {
             defineRanges(builder);
             builder.uint32(COMMON_START, nextCounter);
 
-            writeHydrogenActual(builder, zoneId);
-            writeHydrogenForecast(builder, zoneId);
-            writeWeatherForecast(builder, zoneId);
-            writeJejuOperation(builder, zoneId);
-            writeJejuCurtailment(builder, zoneId);
-            writeDemandForecast(builder, zoneId);
-            writeRenewableForecast(builder, zoneId, "13", SOLAR_FUEL_CODE, RENEWABLE_SOLAR_START);
-            writeRenewableForecast(builder, zoneId, "16", WIND_FUEL_CODE, RENEWABLE_WIND_START);
+            writeRetiredRanges(builder);
+            writeUnavailableActiveRanges(builder);
+            writeSection(builder, "operation", section -> writeJejuOperation(section, zoneId));
+            writeSection(builder, "curtailment", section -> writeJejuCurtailment(section, zoneId));
+            writeSection(builder, "demand", section -> writeDemandForecast(section, zoneId));
+            writeSection(builder, "solar", section -> writeRenewableForecast(section, zoneId, "13", SOLAR_FUEL_CODE, RENEWABLE_SOLAR_START));
+            writeSection(builder, "wind", section -> writeRenewableForecast(section, zoneId, "16", WIND_FUEL_CODE, RENEWABLE_WIND_START));
 
             snapshotRef.set(builder.build());
             updateCounter.set(nextCounter);
@@ -162,96 +154,70 @@ public class ModbusRegisterSnapshotService {
         builder.range(RENEWABLE_WIND_START, RENEWABLE_BLOCK);
     }
 
-    private void writeHydrogenActual(ModbusRegisterMap.Builder builder, ZoneId zoneId) {
-        for (GroupDefinition group : GROUPS) {
-            int base = HYDROGEN_ACTUAL_START + (group.groupIndex() - 1) * HYDROGEN_ACTUAL_BLOCK;
-            Optional<RepDataHgMeasGemGentDa> record = actualRepository
-                    .findFirstByAreaGrpCdAndAreaGrpIdOrderByTmDesc(group.areaGrpCd(), group.areaGrpId());
+    private void writeSection(ModbusRegisterMap.Builder target, String name,
+                              java.util.function.Consumer<ModbusRegisterMap.Builder> writer) {
+        try {
+            var section = ModbusRegisterMap.builder();
+            writer.accept(section);
+            target.overlay(section.build());
+        } catch (Exception exception) {
+            log.error("[Modbus] {} unavailable; typed nulls published for this section", name, exception);
+        }
+    }
 
-            if (record.isEmpty()) {
+    private void writeUnavailableActiveRanges(ModbusRegisterMap.Builder builder) {
+        builder.uint32(JEJU_OPERATION_START, null);
+        for (int offset = 2; offset < 12; offset += 2) builder.float32(JEJU_OPERATION_START + offset, null);
+        builder.uint32(JEJU_CURT_START, null);
+        builder.uint32(DEMAND_START, null);
+        for (int start : new int[]{RENEWABLE_SOLAR_START, RENEWABLE_WIND_START}) {
+            builder.uint32(start, null);
+            builder.uint16(start + 2, start == RENEWABLE_SOLAR_START ? SOLAR_FUEL_CODE : WIND_FUEL_CODE);
+            builder.uint16(start + 3, null);
+        }
+        for (int lead = 0; lead <= 48; lead++) {
+            int curt = JEJU_CURT_START + 2 + lead * 8;
+            builder.uint32(curt, null);
+            builder.uint16(curt + 2, null);
+            builder.float32(curt + 3, null);
+            builder.float32(curt + 5, null);
+            int demand = DEMAND_START + 2 + lead * 22;
+            builder.uint32(demand, null);
+            builder.uint16(demand + 2, null);
+            builder.uint16(demand + 3, null);
+            for (int offset = 4; offset < 22; offset += 2) builder.float32(demand + offset, null);
+            for (int start : new int[]{RENEWABLE_SOLAR_START, RENEWABLE_WIND_START}) {
+                int base = start + 4 + lead * 30;
                 builder.uint32(base, null);
-                builder.float32(base + 2, null);
-                builder.float32(base + 4, null);
-                continue;
-            }
-
-            RepDataHgMeasGemGentDa latest = record.get();
-            builder.uint32(base, epochSeconds(latest.getTm(), zoneId));
-            builder.float32(base + 2, latest.getHgenCapa());
-            builder.float32(base + 4, latest.getHgenProd());
-        }
-    }
-
-    private void writeHydrogenForecast(ModbusRegisterMap.Builder builder, ZoneId zoneId) {
-        for (GroupDefinition group : GROUPS) {
-            int groupBase = HYDROGEN_FORECAST_START + (group.groupIndex() - 1) * HYDROGEN_FORECAST_BLOCK;
-            Optional<RepDataHgFcstGenGentDa> latest = hydrogenForecastRepository
-                    .findFirstByAreaGrpCdAndAreaGrpIdOrderByCrtnTmDesc(group.areaGrpCd(), group.areaGrpId());
-
-            List<RepDataHgFcstGenGentDa> records = latest
-                    .map(item -> hydrogenForecastRepository.findByAreaGrpCdAndAreaGrpIdAndCrtnTmOrderByFcstTmAsc(
-                            group.areaGrpCd(), group.areaGrpId(), item.getCrtnTm()))
-                    .orElse(List.of());
-
-            builder.uint32(groupBase, latest.map(RepDataHgFcstGenGentDa::getCrtnTm)
-                    .map(value -> epochSeconds(value, zoneId))
-                    .orElse(null));
-
-            List<RepDataHgFcstGenGentDa> timeline = uniqueForecastTimeline(records, RepDataHgFcstGenGentDa::getFcstTm);
-            for (int leadIndex = 0; leadIndex <= 48; leadIndex++) {
-                int base = groupBase + 2 + leadIndex * 12;
-                RepDataHgFcstGenGentDa record = leadIndex < timeline.size() ? timeline.get(leadIndex) : null;
-
-                builder.uint32(base, epochSeconds(record == null ? null : record.getFcstTm(), zoneId));
-                builder.uint16(base + 2, resolveLeadMinutes(
-                        record == null ? null : record.getLeadTm(),
-                        record == null ? null : record.getCrtnTm(),
-                        record == null ? null : record.getFcstTm(),
-                        zoneId
-                ));
-                builder.uint16(base + 3, ModbusRegisterCodec.parseUint16(record == null ? null : record.getFcstProdCd()));
-                builder.float32(base + 4, record == null ? null : record.getFcstCapa());
-                builder.float32(base + 6, record == null ? null : record.getFcstQgen());
+                builder.uint16(base + 2, null);
+                builder.uint16(base + 3, null);
+                for (int offset = 4; offset < 30; offset += 2) builder.float32(base + offset, null);
             }
         }
     }
 
-    private void writeWeatherForecast(ModbusRegisterMap.Builder builder, ZoneId zoneId) {
-        for (GroupDefinition group : GROUPS) {
-            int groupBase = WEATHER_START + (group.groupIndex() - 1) * WEATHER_BLOCK;
-            Optional<RepDataHgFcstNwpDa> latest = weatherForecastRepository
-                    .findFirstByAreaGrpCdAndAreaGrpIdOrderByCrtnTmDesc(group.areaGrpCd(), group.areaGrpId());
-
-            List<RepDataHgFcstNwpDa> records = latest
-                    .map(item -> weatherForecastRepository.findByAreaGrpCdAndAreaGrpIdAndCrtnTmOrderByFcstTmAsc(
-                            group.areaGrpCd(), group.areaGrpId(), item.getCrtnTm()))
-                    .orElse(List.of());
-
-            builder.uint32(groupBase, latest.map(RepDataHgFcstNwpDa::getCrtnTm)
-                    .map(value -> epochSeconds(value, zoneId))
-                    .orElse(null));
-
-            List<RepDataHgFcstNwpDa> timeline = uniqueForecastTimeline(records, RepDataHgFcstNwpDa::getFcstTm);
-            for (int leadIndex = 0; leadIndex <= 48; leadIndex++) {
-                int base = groupBase + 2 + leadIndex * 20;
-                RepDataHgFcstNwpDa record = leadIndex < timeline.size() ? timeline.get(leadIndex) : null;
-
-                builder.uint32(base, epochSeconds(record == null ? null : record.getFcstTm(), zoneId));
-                builder.uint16(base + 2, resolveLeadMinutes(
-                        record == null ? null : record.getLeadTm(),
-                        record == null ? null : record.getCrtnTm(),
-                        record == null ? null : record.getFcstTm(),
-                        zoneId
-                ));
-                builder.uint16(base + 3, ModbusRegisterCodec.parseUint16(record == null ? null : record.getFcstProdCd()));
-                builder.float32(base + 4, record == null ? null : record.getFcstSrad());
-                builder.float32(base + 6, record == null ? null : record.getFcstTemp());
-                builder.float32(base + 8, record == null ? null : record.getFcstHumi());
-                builder.float32(base + 10, record == null ? null : record.getFcstWspd());
-                builder.float32(base + 12, record == null ? null : record.getFcstWdir());
-                builder.float32(base + 14, record == null ? null : record.getFcstPsfc());
-                builder.float32(base + 16, record == null ? null : record.getFcstWsl2());
-                builder.float32(base + 18, record == null ? null : record.getFcstWdl2());
+    // Keep the published addresses and typed null encoding for retired blocks.
+    private void writeRetiredRanges(ModbusRegisterMap.Builder builder) {
+        for (int i = 0; i < GROUPS.size(); i++) {
+            int actual = HYDROGEN_ACTUAL_START + i * HYDROGEN_ACTUAL_BLOCK;
+            builder.uint32(actual, null);
+            builder.float32(actual + 2, null);
+            builder.float32(actual + 4, null);
+            int hydrogen = HYDROGEN_FORECAST_START + i * HYDROGEN_FORECAST_BLOCK;
+            int weather = WEATHER_START + i * WEATHER_BLOCK;
+            builder.uint32(hydrogen, null);
+            builder.uint32(weather, null);
+            for (int lead = 0; lead <= 48; lead++) {
+                int h = hydrogen + 2 + lead * 12;
+                int w = weather + 2 + lead * 20;
+                builder.uint32(h, null);
+                builder.uint32(w, null);
+                builder.uint16(h + 2, null);
+                builder.uint16(h + 3, null);
+                builder.uint16(w + 2, null);
+                builder.uint16(w + 3, null);
+                for (int offset = 4; offset < 8; offset += 2) builder.float32(h + offset, null);
+                for (int offset = 4; offset < 20; offset += 2) builder.float32(w + offset, null);
             }
         }
     }
@@ -330,16 +296,17 @@ public class ModbusRegisterSnapshotService {
     }
 
     private void writeRenewableForecast(ModbusRegisterMap.Builder builder, ZoneId zoneId, String fuelCode, int fuelType, int blockStart) {
-        Optional<RepDataReFcstGenDa> latest = renewableRepository.findTopByFuelTpCdOrderByCrtnTmDesc(fuelCode);
+        String marketCode = marketSelection.resolve();
+        Optional<RepDataReFcstGenDa> latest = renewableRepository.findTopByPwrExcTpCdAndFuelTpCdOrderByCrtnTmDesc(marketCode, fuelCode);
         List<RepDataReFcstGenDa> records = latest
-                .map(item -> renewableRepository.findByFuelTpCdAndCrtnTmOrderByFcstTmAsc(fuelCode, item.getCrtnTm()))
+                .map(item -> renewableRepository.findByPwrExcTpCdAndFuelTpCdAndCrtnTmOrderByFcstTmAsc(marketCode, fuelCode, item.getCrtnTm()))
                 .orElse(List.of());
 
         builder.uint32(blockStart, latest.map(RepDataReFcstGenDa::getCrtnTm)
                 .map(value -> epochSeconds(value, zoneId))
                 .orElse(null));
         builder.uint16(blockStart + 2, fuelType);
-        builder.uint16(blockStart + 3, POWER_MARKET_CODE);
+        builder.uint16(blockStart + 3, ModbusRegisterCodec.parseUint16(marketCode));
 
         List<RepDataReFcstGenDa> timeline = uniqueForecastTimeline(records, RepDataReFcstGenDa::getFcstTm);
         for (int leadIndex = 0; leadIndex <= 48; leadIndex++) {
@@ -409,6 +376,8 @@ public class ModbusRegisterSnapshotService {
         ModbusRegisterMap.Builder builder = ModbusRegisterMap.builder();
         defineRanges(builder);
         builder.uint32(COMMON_START, 0L);
+        writeRetiredRanges(builder);
+        writeUnavailableActiveRanges(builder);
         return builder.build();
     }
 }

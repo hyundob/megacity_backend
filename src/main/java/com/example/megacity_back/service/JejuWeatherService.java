@@ -22,8 +22,18 @@ public class JejuWeatherService {
     // 제주 격자 (기본값: 제주시) - CSV 기준: 5011000000 제주시
     private static final int NX = 53, NY = 38;
 
-    private final RestTemplate rest = new RestTemplate();
+    private final RestTemplate rest;
     private final ObjectMapper om = new ObjectMapper();
+    private final java.util.concurrent.ConcurrentHashMap<String, CachedWeather> cache = new java.util.concurrent.ConcurrentHashMap<>();
+
+    public JejuWeatherService() {
+        var factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(1000);
+        factory.setReadTimeout(2000);
+        rest = new RestTemplate(factory);
+    }
+
+    private record CachedWeather(Map<String, Object> data, long expiresAt) {}
 
     @Value("${kma.key:}")
     private String kmaKey;
@@ -35,6 +45,20 @@ public class JejuWeatherService {
 
     /** 실황(T1H/PTY/VEC/WSD) + 예보(SKY/PTY) 합본 (지역별) */
     public Map<String, Object> fetchMergedNow(int nx, int ny) {
+        if (nx < 1 || nx > 149 || ny < 1 || ny > 253) throw new IllegalArgumentException("Invalid weather grid");
+        String grid = nx + ":" + ny;
+        if (cache.size() > 256) cache.clear();
+        CachedWeather result = cache.compute(grid, (ignored, previous) -> {
+            if (previous != null && previous.expiresAt() > System.currentTimeMillis()) return previous;
+            Map<String, Object> data = fetchUncached(nx, ny);
+            long ttl = Boolean.TRUE.equals(data.get("success")) ? 300_000L : 30_000L;
+            return new CachedWeather(Collections.unmodifiableMap(new LinkedHashMap<>(data)), System.currentTimeMillis() + ttl);
+        });
+        return result.data();
+    }
+
+    private Map<String, Object> fetchUncached(int nx, int ny) {
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(6);
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("success", false);
         out.put("reason", "init");
@@ -46,7 +70,7 @@ public class JejuWeatherService {
         }
 
         // ------- 1) 실황: HH00 (매시 10분 이후 권장) -------
-        Map<String, Object> ncst = fetchNcstBlock(key, nx, ny);
+        Map<String, Object> ncst = fetchNcstBlock(key, nx, ny, deadline);
         out.putAll(prefix("ncst_", ncst));
 
         // 인증/승인 문제면 더 진행해도 의미 없음
@@ -57,7 +81,7 @@ public class JejuWeatherService {
         }
 
         // ------- 2) 예보: HH30 (매시 45분 이후 권장) -------
-        Map<String, Object> fcst = fetchFcstBlock(key, nx, ny);
+        Map<String, Object> fcst = fetchFcstBlock(key, nx, ny, deadline);
         out.putAll(prefix("fcst_", fcst));
 
         // 최종 성공 판정: 어느 쪽이든 주요 값이 있으면 true
@@ -75,7 +99,7 @@ public class JejuWeatherService {
     }
 
     // ---------------- 실황 블록 (T1H/PTY/VEC/WSD) ---------------- 
-    private Map<String, Object> fetchNcstBlock(String key, int nx, int ny) {
+    private Map<String, Object> fetchNcstBlock(String key, int nx, int ny, long deadline) {
         Map<String, Object> out = base();
         out.put("scope", "ncst");
 
@@ -85,6 +109,7 @@ public class JejuWeatherService {
                 : now.minusHours(1).withMinute(0).withSecond(0).withNano(0);
 
         for (int i = 0; i < 3; i++) {
+            if (System.nanoTime() >= deadline) { out.put("reason", "timeout"); break; }
             String baseDate = yyyymmdd(base.toLocalDate());
             String baseTime = hhmm(base.toLocalTime());
 
@@ -157,7 +182,7 @@ public class JejuWeatherService {
     }
 
     // ---------------- 예보 블록 (SKY/PTY) ---------------- 
-    private Map<String, Object> fetchFcstBlock(String key, int nx, int ny) {
+    private Map<String, Object> fetchFcstBlock(String key, int nx, int ny, long deadline) {
         Map<String, Object> out = base();
         out.put("scope", "fcst");
 
@@ -166,6 +191,7 @@ public class JejuWeatherService {
         if (nowKst.getMinute() < 45) base = base.minusHours(1); // HH30, 45분 이후 권장
 
         for (int i = 0; i < 6; i++) { // 최대 6시간 역방향
+            if (System.nanoTime() >= deadline) { out.put("reason", "timeout"); break; }
             String baseDate = yyyymmdd(base.toLocalDate());
             String baseTime = String.format("%02d30", base.getHour());
 

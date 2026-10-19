@@ -5,16 +5,21 @@ import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
 public class WebConfig {
+    @org.springframework.beans.factory.annotation.Value("${megacity.cors-origins:http://localhost:3000,http://localhost:5173}")
+    private String[] origins;
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/hydrogen/**")
+                        .allowedOrigins(origins)
+                        .allowedMethods("GET", "POST")
+                        .allowedHeaders("Content-Type", "X-Hydrogen-Command-Key");
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173", "http://localhost:3000", "http://210.222.202.14:13000", "http://210.222.202.14:3000", "http://tef.ai:13000", "http://tef.ai:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowCredentials(true);
+                        .allowedOrigins(origins)
+                        .allowedMethods("GET");
 
             }
         };

@@ -16,7 +16,7 @@ import java.util.*;
 public class JejuCurtPredictService {
     private final RepDataHgFcstCurtDaRepository repository;
     public List<FcstCurtDaDto> getTodayCurtailment() {
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String today = LocalDate.now(java.time.ZoneId.of("Asia/Seoul")).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         return repository.findByFcstTmStartingWith(today).stream()
                 .map(e -> FcstCurtDaDto.builder()

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Data
 public class DataSyncProperties {
 
-    private SourceDatasource sourceDatasource = new SourceDatasource();
     private int batchSize = 1000;
+    private int maxBatchesPerRun = 10;
     private Retry retry = new Retry();
     private Lag lag = new Lag();
 

@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +50,7 @@ public class SyncMetrics {
         lastSuccessEpoch.computeIfAbsent(table, t -> {
             AtomicLong ref = new AtomicLong(0L);
 
-            Gauge.builder("sync.lag.seconds", ref, AtomicLong::get)
+            Gauge.builder("sync.lag.seconds", ref, value -> lagSeconds(value.get()))
                     .description("마지막 싱크 성공 후 경과 시간(초)")
                     .tag("table", t)
                     .register(registry);
@@ -118,7 +117,7 @@ public class SyncMetrics {
         registerIfAbsent(table);
         if (lastSyncSuccessAt == null) return;
 
-        long epoch = lastSyncSuccessAt.toEpochSecond(ZoneOffset.UTC);
+        long epoch = lastSyncSuccessAt.atZone(java.time.ZoneId.of("Asia/Seoul")).toEpochSecond();
         lastSuccessEpoch.get(table).set(epoch);
 
         long lagSeconds = lagSeconds(epoch);
@@ -135,10 +134,10 @@ public class SyncMetrics {
     }
 
     private long nowEpoch() {
-        return LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        return java.time.Instant.now().getEpochSecond();
     }
 
     private long lagSeconds(long lastEpoch) {
-        return Math.max(0, nowEpoch() - lastEpoch);
+        return lastEpoch == 0 ? 0 : Math.max(0, nowEpoch() - lastEpoch);
     }
 }
